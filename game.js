@@ -7,7 +7,6 @@ class Level extends Phaser.Scene {
     constructor(key) {
         super(key);
         this.levelKey = key
-        // TASK : Add 'Level4' 
         this.nextLevel = {
             'Level1': 'Level2',
             'Level2': 'Level3',
@@ -379,8 +378,8 @@ class Credits extends Phaser.Scene {
 
 const config = {
     type: Phaser.AUTO,
-    width: 500,
-    height: 600,
+    width: 1280,
+    height: 720,
     fps: { target: 60 },
     backgroundColor: "b9eaff",
     physics: {
