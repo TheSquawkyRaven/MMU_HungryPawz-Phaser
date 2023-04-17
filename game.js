@@ -71,8 +71,122 @@ class Level extends Phaser.Scene {
 
     initAnimations() {
         this.anims.create({
-            key: 'idle',
+            key: 'idle_sit',
             frames: this.anims.generateFrameNumbers('cat', {start: 0, end: 15}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('cat', {start: 16, end: 31}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers('cat', {start: 32, end: 47}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNumbers('cat', {start: 48, end: 51}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'run_fast',
+            frames: this.anims.generateFrameNumbers('cat', {start: 56, end: 57}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'run_faster',
+            frames: this.anims.generateFrameNumbers('cat', {start: 64, end: 66}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'lay_tired',
+            frames: this.anims.generateFrameNumbers('cat', {start: 72, end: 75}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'lay_looking',
+            frames: this.anims.generateFrameNumbers('cat', {start: 80, end: 87}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'lay_sleeping',
+            frames: this.anims.generateFrameNumbers('cat', {start: 88, end: 95}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'lay_sneak_prepare',
+            frames: this.anims.generateFrameNumbers('cat', {start: 96, end: 99}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'lay_sneak',
+            frames: this.anims.generateFrameNumbers('cat', {start: 104, end: 107}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'sit_to_stand',
+            frames: this.anims.generateFrameNumbers('cat', {start: 112, end: 115}),
+            frameRate: 8,
+            repeat: 0 //Once
+        })
+        this.anims.create({
+            key: 'stand_to_sit',
+            frames: this.anims.generateFrameNumbers('cat', {start: 120, end: 125}),
+            frameRate: 8,
+            repeat: 0 //Once
+        })
+        this.anims.create({
+            key: 'spitting',
+            frames: this.anims.generateFrameNumbers('cat', {start: 128, end: 131}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'shocked',
+            frames: this.anims.generateFrameNumbers('cat', {start: 144, end: 151}),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        })
+        this.anims.create({
+            key: 'jump_start',
+            frames: this.anims.generateFrameNumbers('cat', {start: 152, end: 155}),
+            frameRate: 8,
+            repeat: 0 //Repeat forever
+        })
+        this.anims.create({
+            key: 'jump_end',
+            frames: this.anims.generateFrameNumbers('cat', {start: 160, end: 165}),
+            frameRate: 8,
+            repeat: 0 //Repeat forever
+        })
+        this.anims.create({
+            key: 'sit_to_look_down',
+            frames: this.anims.generateFrameNumbers('cat', {start: 168, end: 171}),
+            frameRate: 8,
+            repeat: 0 //Repeat forever
+        })
+        this.anims.create({
+            key: 'look_down_to_sit',
+            frames: this.anims.generateFrameNumbers('cat', {start: 176, end: 179}),
+            frameRate: 8,
+            repeat: 0 //Repeat forever
+        })
+        this.anims.create({
+            key: 'look_down_lick',
+            frames: this.anims.generateFrameNumbers('cat', {start: 256, end: 259}),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
@@ -190,7 +304,7 @@ class Level extends Phaser.Scene {
 
         const player = gameState.player = this.physics.add.sprite(128, 128, 'cat')
         player.setScale(4)
-        player.anims.play('idle', true);
+        player.anims.play('look_down_lick', true);
         //gameState.platforms = this.physics.add.staticGroup();
 
 
