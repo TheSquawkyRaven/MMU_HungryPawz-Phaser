@@ -1,6 +1,6 @@
-const gameState = {
-    speed: 240,
-    ups: 380,
+const game = {
+    pixelScale: 4,
+    gridSize: 24 * 4,
 };
 
 class Level extends Phaser.Scene {
@@ -16,7 +16,9 @@ class Level extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('cat', 'images/Cat-Sheet.png', {frameWidth: 32, frameHeight: 32})
+        this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 })
+        this.load.spritesheet('oak_woods_tileset', 'images/oak_woods_v1.0/oak_woods_tileset.png', { frameWidth: 24, frameHeight: 24 })
+        this.load.tilemapTiledJSON('map', 'Tiled/map.json');
 
 
         //this.load.image('platform', 'images/platform.png');
@@ -45,7 +47,7 @@ class Level extends Phaser.Scene {
     } // createStars
 
     createParallaxBackgrounds() {
-        gameState.bgColor = this.add.rectangle(0, 0, config.width, config.height, 0x00ffbb).setOrigin(0, 0);
+        this.bgColor = this.add.rectangle(0, 0, config.width, config.height, 0x00ffbb).setOrigin(0, 0);
 
         //gameState.bg1 = this.add.image(0, 0, 'bg1');
         //gameState.bg2 = this.add.image(0, 0, 'bg2');
@@ -72,121 +74,121 @@ class Level extends Phaser.Scene {
     initAnimations() {
         this.anims.create({
             key: 'idle_sit',
-            frames: this.anims.generateFrameNumbers('cat', {start: 0, end: 15}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 0, end: 15 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('cat', {start: 16, end: 31}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 16, end: 31 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'walk',
-            frames: this.anims.generateFrameNumbers('cat', {start: 32, end: 47}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 32, end: 47 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'run',
-            frames: this.anims.generateFrameNumbers('cat', {start: 48, end: 51}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 48, end: 51 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'run_fast',
-            frames: this.anims.generateFrameNumbers('cat', {start: 56, end: 57}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 56, end: 57 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'run_faster',
-            frames: this.anims.generateFrameNumbers('cat', {start: 64, end: 66}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 64, end: 66 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'lay_tired',
-            frames: this.anims.generateFrameNumbers('cat', {start: 72, end: 75}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 72, end: 75 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'lay_looking',
-            frames: this.anims.generateFrameNumbers('cat', {start: 80, end: 87}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 80, end: 87 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'lay_sleeping',
-            frames: this.anims.generateFrameNumbers('cat', {start: 88, end: 95}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 88, end: 95 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'lay_sneak_prepare',
-            frames: this.anims.generateFrameNumbers('cat', {start: 96, end: 99}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 96, end: 99 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'lay_sneak',
-            frames: this.anims.generateFrameNumbers('cat', {start: 104, end: 107}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 104, end: 107 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'sit_to_stand',
-            frames: this.anims.generateFrameNumbers('cat', {start: 112, end: 115}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 112, end: 115 }),
             frameRate: 8,
             repeat: 0 //Once
         })
         this.anims.create({
             key: 'stand_to_sit',
-            frames: this.anims.generateFrameNumbers('cat', {start: 120, end: 125}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 120, end: 125 }),
             frameRate: 8,
             repeat: 0 //Once
         })
         this.anims.create({
             key: 'spitting',
-            frames: this.anims.generateFrameNumbers('cat', {start: 128, end: 131}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 128, end: 131 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'shocked',
-            frames: this.anims.generateFrameNumbers('cat', {start: 144, end: 151}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 144, end: 151 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
         this.anims.create({
             key: 'jump_start',
-            frames: this.anims.generateFrameNumbers('cat', {start: 152, end: 155}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 152, end: 155 }),
             frameRate: 8,
             repeat: 0 //Repeat forever
         })
         this.anims.create({
             key: 'jump_end',
-            frames: this.anims.generateFrameNumbers('cat', {start: 160, end: 165}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 160, end: 165 }),
             frameRate: 8,
             repeat: 0 //Repeat forever
         })
         this.anims.create({
             key: 'sit_to_look_down',
-            frames: this.anims.generateFrameNumbers('cat', {start: 168, end: 171}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 168, end: 171 }),
             frameRate: 8,
             repeat: 0 //Repeat forever
         })
         this.anims.create({
             key: 'look_down_to_sit',
-            frames: this.anims.generateFrameNumbers('cat', {start: 176, end: 179}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 176, end: 179 }),
             frameRate: 8,
             repeat: 0 //Repeat forever
         })
         this.anims.create({
             key: 'look_down_lick',
-            frames: this.anims.generateFrameNumbers('cat', {start: 256, end: 259}),
+            frames: this.anims.generateFrameNumbers('cat', { start: 256, end: 259 }),
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
@@ -295,17 +297,37 @@ class Level extends Phaser.Scene {
     } // levelSetup()
 
     create() {
-        gameState.active = true
+        this.active = true
 
         //this.createStars();
 
         //this.createParallaxBackgrounds();
         this.initAnimations();
 
-        const player = gameState.player = this.physics.add.sprite(128, 128, 'cat')
-        player.setScale(4)
-        player.anims.play('look_down_lick', true);
-        //gameState.platforms = this.physics.add.staticGroup();
+        const player = this.player = this.physics.add.sprite(128, 128, 'cat')
+        player.setScale(game.pixelScale);
+        player.anims.play('walk', true);
+        player.movementSpeed = 100;
+        player.body.setSize(16, 16);
+        player.body.setOffset(8, 16);
+
+        const map = this.make.tilemap({ key: 'map' });
+        const tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
+        const platforms = this.platforms = map.createStaticLayer('Base', tileset, 0, 200);
+        platforms.setCollisionByExclusion(-1, true);
+        platforms.setScale(game.pixelScale)
+
+        // const blocks = this.blocks = this.physics.add.staticGroup();
+        // let b = blocks.create(game.gridSize, game.gridSize * 3, 'blocks');
+        // b.setScale(game.pixelScale);
+        // b.refreshBody();
+        // b.setFrame(3);
+
+        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.player, this.blocks);
+
+
+        //game.block = this.physics.add.sprite(40, 100, 'block');
 
 
         //this.createSnow();
@@ -316,17 +338,20 @@ class Level extends Phaser.Scene {
         //this.physics.world.setBounds(0, 0, gameState.width, gameState.bg3.height + gameState.player.height);
 
         this.cameras.main.startFollow(
-            gameState.player,
+            this.player,
             true,
             0.15, 0.15
         )
 
-        gameState.player.setCollideWorldBounds(true);
-
         //this.physics.add.collider(gameState.player, gameState.platforms);
         //this.physics.add.collider(gameState.goal, gameState.platforms);
 
-        gameState.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+        });
     } // create()
 
     createPlatform(xIndex, yIndex) {
@@ -338,6 +363,28 @@ class Level extends Phaser.Scene {
     }
 
     update() {
+
+        let input = new Phaser.Math.Vector2();
+        if (this.cursors.right.isDown) {
+            input.x += 1;
+            this.player.setFlipX(false)
+        }
+        if (this.cursors.left.isDown) {
+            input.x -= 1;
+            this.player.setFlipX(true)
+        }
+        if (this.cursors.up.isDown) {
+            input.y -= 1;
+        }
+        if (this.cursors.down.isDown) {
+            input.y += 1;
+        }
+        if (input.x != 0 && input.y !== 0){
+            input.normalize();
+        }
+        this.player.setVelocityX(input.x * this.player.movementSpeed);
+        this.player.setVelocityY(input.y * this.player.movementSpeed);
+
         // if (gameState.active) {
         //     gameState.goal.anims.play('fire', true);
         //     if (gameState.cursors.right.isDown) {
@@ -449,13 +496,13 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
+            debug: true,
             gravity: { y: 800 },
             enableBody: true,
-
         }
     },
     pixelArt: true,
     scene: [Level1, Level2, Level3, Level4]
 };
 
-const game = new Phaser.Game(config);
+const runningGame = new Phaser.Game(config);
