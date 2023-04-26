@@ -1,4 +1,4 @@
-const game = {
+const g = {
     pixelScale: 4,
     gridSize: 24 * 4,
 };
@@ -6,13 +6,13 @@ const game = {
 class Level extends Phaser.Scene {
     constructor(key) {
         super(key);
-        this.levelKey = key
-        this.nextLevel = {
-            'Level1': 'Level2',
-            'Level2': 'Level3',
-            'Level3': 'Level4',
-            'Level3': 'Credits',
-        }
+        // this.levelKey = key
+        // this.nextLevel = {
+        //     'Level1': 'Level2',
+        //     'Level2': 'Level3',
+        //     'Level3': 'Level4',
+        //     'Level3': 'Credits',
+        // }
     }
 
     preload() {
@@ -82,7 +82,7 @@ class Level extends Phaser.Scene {
             key: 'idle',
             frames: this.anims.generateFrameNumbers('cat', { start: 16, end: 31 }),
             frameRate: 8,
-            repeat: -1 //Repeat forever
+            repeat: 1
         })
         this.anims.create({
             key: 'walk',
@@ -195,6 +195,13 @@ class Level extends Phaser.Scene {
 
     }
 
+    onPlayerAnimationComplete(animation, frame, sprite) {
+        if (animation.key == 'idle') {
+            this.player.anims.play('idle_sit', true);
+            this.player.anim = 'idle_sit';
+        }
+    }
+
     createSnow() {
         // gameState.particles = this.add.particles('snowflake');
 
@@ -304,10 +311,16 @@ class Level extends Phaser.Scene {
         //this.createParallaxBackgrounds();
         this.initAnimations();
 
+        console.log(game);
+
         const player = this.player = this.physics.add.sprite(128, 128, 'cat')
-        player.setScale(game.pixelScale);
+        player.setScale(g.pixelScale);
+        player.on('animationcomplete', this.onPlayerAnimationComplete, this);
         player.anims.play('walk', true);
-        player.movementSpeed = 100;
+        player.anim = 'walk';
+        player.xAcceleration = 40;
+        player.xDeceleration = 50;
+        player.maxXSpeed = 400;
         player.body.setSize(16, 16);
         player.body.setOffset(8, 16);
 
@@ -315,7 +328,7 @@ class Level extends Phaser.Scene {
         const tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
         const platforms = this.platforms = map.createStaticLayer('Base', tileset, 0, 200);
         platforms.setCollisionByExclusion(-1, true);
-        platforms.setScale(game.pixelScale)
+        platforms.setScale(g.pixelScale)
 
         // const blocks = this.blocks = this.physics.add.staticGroup();
         // let b = blocks.create(game.gridSize, game.gridSize * 3, 'blocks');
@@ -363,28 +376,83 @@ class Level extends Phaser.Scene {
     }
 
     update() {
+        const delta = game.loop.delta / 16;
 
         let input = new Phaser.Math.Vector2();
+        let verticalMovement, horizontalMovement = false;
         if (this.cursors.right.isDown) {
             input.x += 1;
+            horizontalMovement = true;
             this.player.setFlipX(false)
         }
         if (this.cursors.left.isDown) {
             input.x -= 1;
+            horizontalMovement = horizontalMovement ? false : true; // Cancel out horizontal movement
             this.player.setFlipX(true)
         }
         if (this.cursors.up.isDown) {
             input.y -= 1;
+            verticalMovement = true;
         }
         if (this.cursors.down.isDown) {
             input.y += 1;
+            verticalMovement = true;
         }
         if (input.x != 0 && input.y !== 0){
             input.normalize();
         }
-        this.player.setVelocityX(input.x * this.player.movementSpeed);
-        this.player.setVelocityY(input.y * this.player.movementSpeed);
 
+        // Horizontal Movement
+        if (horizontalMovement) {
+            let xVel = this.player.body.velocity.x + input.x * this.player.xAcceleration * delta;
+            let isMaxSpeed = false;
+            if (xVel > this.player.maxXSpeed) {
+                xVel = this.player.maxXSpeed;
+                isMaxSpeed = true;
+            }
+            else if (xVel < -this.player.maxXSpeed) {
+                xVel = -this.player.maxXSpeed;
+                isMaxSpeed = true;
+            }
+            this.player.setVelocityX(xVel);
+            this.player.anims.play('run', true);
+            this.player.anim = 'run';
+        }
+        else {
+            let xVel = this.player.body.velocity.x;
+            let isStopped = false;
+            if (xVel > 0) {
+                xVel -= this.player.xDeceleration * delta;
+                if (xVel < 0) {
+                    xVel = 0;
+                }
+            }
+            else if (xVel < 0) {
+                xVel += this.player.xDeceleration * delta;
+                if (xVel > 0) {
+                    xVel = 0;
+                }
+            }
+            else {
+                isStopped = true;
+            }
+            this.player.setVelocityX(xVel);
+            if (isStopped) {
+                if (this.player.anim != 'idle_sit') {
+                    this.player.anims.play('idle', true);
+                    this.player.anim = 'idle';
+                }
+            }
+            else{
+                this.player.anims.play('run', true);
+                this.player.anim = 'run';
+            }
+        }
+
+        // Vertical Movement
+        if (verticalMovement) {
+            this.player.setVelocityY(input.y * this.player.xAcceleration);
+        }
         // if (gameState.active) {
         //     gameState.goal.anims.play('fire', true);
         //     if (gameState.cursors.right.isDown) {
@@ -428,37 +496,37 @@ class Level extends Phaser.Scene {
 }
 
 // heights are the heights of the platforms
-class Level1 extends Level {
-    constructor() {
-        super('Level1')
-        this.heights = [4, 7, 5, null, 5, 4, null, 4, 4];
-        this.weather = 'morning';
-    }
-}
+// class Level1 extends Level {
+//     constructor() {
+//         super('Level1')
+//         this.heights = [4, 7, 5, null, 5, 4, null, 4, 4];
+//         this.weather = 'morning';
+//     }
+// }
 
-class Level2 extends Level {
-    constructor() {
-        super('Level2')
-        this.heights = [5, 4, null, 4, 6, 4, 6, 5, 5];
-        this.weather = 'afternoon';
-    }
-}
+// class Level2 extends Level {
+//     constructor() {
+//         super('Level2')
+//         this.heights = [5, 4, null, 4, 6, 4, 6, 5, 5];
+//         this.weather = 'afternoon';
+//     }
+// }
 
-class Level3 extends Level {
-    constructor() {
-        super('Level3')
-        this.heights = [6, null, 6, 4, 6, 4, 5, null, 4];
-        this.weather = 'twilight';
-    }
-}
+// class Level3 extends Level {
+//     constructor() {
+//         super('Level3')
+//         this.heights = [6, null, 6, 4, 6, 4, 5, null, 4];
+//         this.weather = 'twilight';
+//     }
+// }
 
-class Level4 extends Level {
-    constructor() {
-        super('Level4')
-        this.heights = [6, null, 6, 4, 6, 4, 5, null, 4];
-        this.weather = 'night';
-    }
-}
+// class Level4 extends Level {
+//     constructor() {
+//         super('Level4')
+//         this.heights = [6, null, 6, 4, 6, 4, 5, null, 4];
+//         this.weather = 'night';
+//     }
+// }
 
 // class Credits extends Phaser.Scene {
 //     constructor() {
@@ -497,12 +565,12 @@ const config = {
         default: 'arcade',
         arcade: {
             debug: true,
-            gravity: { y: 800 },
+            gravity: { y: 500 },
             enableBody: true,
         }
     },
     pixelArt: true,
-    scene: [Level1, Level2, Level3, Level4]
+    scene: [Level]
 };
 
-const runningGame = new Phaser.Game(config);
+const game = new Phaser.Game(config);
