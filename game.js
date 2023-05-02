@@ -6,19 +6,13 @@ const g = {
 class Level extends Phaser.Scene {
     constructor(key) {
         super(key);
-        // this.levelKey = key
-        // this.nextLevel = {
-        //     'Level1': 'Level2',
-        //     'Level2': 'Level3',
-        //     'Level3': 'Level4',
-        //     'Level3': 'Credits',
-        // }
     }
 
     preload() {
         this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 })
         this.load.spritesheet('oak_woods_tileset', 'images/oak_woods_v1.0/oak_woods_tileset.png', { frameWidth: 24, frameHeight: 24 })
         this.load.tilemapTiledJSON('map', 'Tiled/map.json');
+        this.load.image('nothing', 'images/nothing.png');
 
 
         //this.load.image('platform', 'images/platform.png');
@@ -305,10 +299,6 @@ class Level extends Phaser.Scene {
 
     create() {
         this.active = true
-
-        //this.createStars();
-
-        //this.createParallaxBackgrounds();
         this.initAnimations();
 
         console.log(game);
@@ -320,9 +310,14 @@ class Level extends Phaser.Scene {
         player.anim = 'walk';
         player.xAcceleration = 40;
         player.xDeceleration = 50;
+        player.jumpVelocity = 600;
+        player.wallJumpVelocity = 600;
         player.maxXSpeed = 400;
         player.body.setSize(16, 16);
         player.body.setOffset(8, 16);
+        player.gravity = true;
+
+        player.isGrounded = false;
 
         const map = this.make.tilemap({ key: 'map' });
         const tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
@@ -330,14 +325,22 @@ class Level extends Phaser.Scene {
         platforms.setCollisionByExclusion(-1, true);
         platforms.setScale(g.pixelScale)
 
+        this.debugText = this.add.text(0, 0, 'Player', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
+        console.log(this.debugText)
+
         // const blocks = this.blocks = this.physics.add.staticGroup();
         // let b = blocks.create(game.gridSize, game.gridSize * 3, 'blocks');
         // b.setScale(game.pixelScale);
         // b.refreshBody();
         // b.setFrame(3);
 
-        this.physics.add.collider(this.player, this.platforms);
-        this.physics.add.collider(this.player, this.blocks);
+        this.physics.add.collider(this.player, this.platforms, () => {
+            if (player.body.onFloor()) {
+                player.isGrounded = true;
+            }
+
+
+        });
 
 
         //game.block = this.physics.add.sprite(40, 100, 'block');
@@ -378,6 +381,28 @@ class Level extends Phaser.Scene {
     update() {
         const delta = game.loop.delta / 16;
 
+        this.player.canWallJump = false;
+        if (this.player.body.blocked.left) {
+            this.player.canWallJump = true;
+        }
+        if (this.player.body.blocked.right) {
+            this.player.canWallJump = true;
+        }
+
+        if (this.player.canWallJump) {
+            if (this.player.gravity) {
+                this.player.setVelocityY(0);
+                this.player.body.setAllowGravity(false);
+                this.player.gravity = false;
+            }
+        }
+        else {
+            if (!this.player.gravity) {
+                this.player.body.setAllowGravity(true);
+                this.player.gravity = true;
+            }
+        }
+
         let input = new Phaser.Math.Vector2();
         let verticalMovement, horizontalMovement = false;
         if (this.cursors.right.isDown) {
@@ -397,9 +422,6 @@ class Level extends Phaser.Scene {
         if (this.cursors.down.isDown) {
             input.y += 1;
             verticalMovement = true;
-        }
-        if (input.x != 0 && input.y !== 0){
-            input.normalize();
         }
 
         // Horizontal Movement
@@ -450,30 +472,24 @@ class Level extends Phaser.Scene {
         }
 
         // Vertical Movement
-        if (verticalMovement) {
-            this.player.setVelocityY(input.y * this.player.xAcceleration);
+        if (this.player.isGrounded) {
+            if (verticalMovement) {
+                let jumpVel = input.y * this.player.jumpVelocity;
+                this.player.setVelocityY(jumpVel);
+            }
+            this.player.isGrounded = false;
         }
-        // if (gameState.active) {
-        //     gameState.goal.anims.play('fire', true);
-        //     if (gameState.cursors.right.isDown) {
-        //         gameState.player.flipX = false;
-        //         gameState.player.setVelocityX(gameState.speed);
-        //     } else if (gameState.cursors.left.isDown) {
-        //         gameState.player.flipX = true;
-        //         gameState.player.setVelocityX(-gameState.speed);
-        //     } else {
-        //         gameState.player.setVelocityX(0);
-        //         gameState.player.anims.play('idle', true);
-        //     }
+        else if (this.player.canWallJump) {
+            if (verticalMovement) {
+                let jumpVel = input.y * this.player.wallJumpVelocity;
+                this.player.setVelocityY(jumpVel);
+            }
+        }
 
-        //     if (Phaser.Input.Keyboard.JustDown(gameState.cursors.space)
-        //         && gameState.player.body.touching.down) {
-        //         gameState.player.setVelocityY(-500);
-        //     }
 
-        //     if (!gameState.player.body.touching.down) {
-        //     }
-
+        this.debugText.x = this.player.x - 45;
+        this.debugText.y = this.player.y + 70;
+        
         //     if (gameState.player.y > gameState.bg3.height) {
 
         //         // Camera Shake Effect
@@ -495,66 +511,6 @@ class Level extends Phaser.Scene {
 
 }
 
-// heights are the heights of the platforms
-// class Level1 extends Level {
-//     constructor() {
-//         super('Level1')
-//         this.heights = [4, 7, 5, null, 5, 4, null, 4, 4];
-//         this.weather = 'morning';
-//     }
-// }
-
-// class Level2 extends Level {
-//     constructor() {
-//         super('Level2')
-//         this.heights = [5, 4, null, 4, 6, 4, 6, 5, 5];
-//         this.weather = 'afternoon';
-//     }
-// }
-
-// class Level3 extends Level {
-//     constructor() {
-//         super('Level3')
-//         this.heights = [6, null, 6, 4, 6, 4, 5, null, 4];
-//         this.weather = 'twilight';
-//     }
-// }
-
-// class Level4 extends Level {
-//     constructor() {
-//         super('Level4')
-//         this.heights = [6, null, 6, 4, 6, 4, 5, null, 4];
-//         this.weather = 'night';
-//     }
-// }
-
-// class Credits extends Phaser.Scene {
-//     constructor() {
-//         super('Credits')
-//     }
-
-//     preload() {
-//         this.load.spritesheet('codey_sled', 'images/codey_sled.png', { frameWidth: 81, frameHeight: 90 });
-//     }
-
-//     create() {
-//         gameState.player = this.add.sprite(config.width / 2, config.height / 2, 'codey_sled');
-
-//         this.anims.create({
-//             key: 'sled',
-//             frames: this.anims.generateFrameNumbers('codey_sled'),
-//             frameRate: 10,
-//             repeat: -1
-//         })
-
-//         gameState.player.angle = 20;
-//     }
-
-//     update() {
-//         gameState.player.anims.play('sled', true);
-//     }
-// }
-
 const config = {
     type: Phaser.AUTO,
     width: 1280,
@@ -565,7 +521,7 @@ const config = {
         default: 'arcade',
         arcade: {
             debug: true,
-            gravity: { y: 500 },
+            gravity: { y: 1000 },
             enableBody: true,
         }
     },

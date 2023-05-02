@@ -9,11 +9,11 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "map.tmx": {
-            "scale": 1.6915277777777775,
+            "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 267.21405698333194,
-                "y": 207.5047212414813
+                "x": 415,
+                "y": 278
             }
         },
         "map.tmx#oak_woods_tileset": {
