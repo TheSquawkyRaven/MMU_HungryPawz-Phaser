@@ -28,35 +28,35 @@
             "scaleInDock": 3
         },
         "map.tmx": {
-            "scale": 1.5,
+            "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 2104,
-                "y": 502.66666666666663
+                "x": 1712,
+                "y": 385
             }
         },
         "map.tmx#city2_tileset": {
             "scaleInDock": 1
         },
         "map.tmx#city_buildings": {
-            "scaleInDock": 1,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "map.tmx#city_props": {
-            "scaleInDock": 1
+            "scaleInDock": 1.5
         },
         "map.tmx#city_tileset": {
-            "scaleInDock": 3,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "map.tmx#future_tiles": {
             "scaleInDock": 1
         },
         "map.tmx#neon_tiles": {
-            "scaleInDock": 1
+            "scaleInDock": 1.5
         },
         "map.tmx#oak_woods_tileset": {
-            "scaleInDock": 2,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "neon_tiles.tsx": {

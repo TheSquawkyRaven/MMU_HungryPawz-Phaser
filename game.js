@@ -4,8 +4,8 @@ const g = {
 };
 
 class Level extends Phaser.Scene {
-    constructor(key) {
-        super(key);
+    constructor(config) {
+        super(config);
     }
 
     preload() {
@@ -195,13 +195,6 @@ class Level extends Phaser.Scene {
 
     }
 
-    onPlayerAnimationComplete(animation, frame, sprite) {
-        if (animation.key == 'idle') {
-            this.player.anims.play('idle_sit', true);
-            this.player.anim = 'idle_sit';
-        }
-    }
-
     createSnow() {
         // gameState.particles = this.add.particles('snowflake');
 
@@ -295,7 +288,7 @@ class Level extends Phaser.Scene {
         const base = this.platforms = map.createStaticLayer('Base', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const decoBackground = map.createStaticLayer('DecoBackground', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const deco = map.createStaticLayer('Deco', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
-        
+
         tintedBackground.setScale(g.pixelScale);
         background.setScale(g.pixelScale);
         base.setScale(g.pixelScale)
@@ -305,24 +298,9 @@ class Level extends Phaser.Scene {
         base.setCollisionByExclusion(-1, true);
 
 
+        const player = this.player = new Player(this, 128, 128);
 
 
-        const player = this.player = this.physics.add.sprite(128, 128, 'cat')
-        player.setScale(g.pixelScale);
-        player.on('animationcomplete', this.onPlayerAnimationComplete, this);
-        player.anims.play('walk', true);
-        player.anim = 'walk';
-        player.xAcceleration = 40;
-        player.xDeceleration = 50;
-        player.jumpVelocity = 600;
-        player.wallJumpVelocity = 600;
-        player.maxXSpeed = 400;
-        player.maxFallSpeed = 750;
-        player.body.setSize(16, 16);
-        player.body.setOffset(8, 16);
-        player.gravity = true;
-
-        player.isGrounded = false;
 
         this.debugText = this.add.text(0, 0, 'Player', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
         console.log(this.debugText)
@@ -333,13 +311,6 @@ class Level extends Phaser.Scene {
         // b.refreshBody();
         // b.setFrame(3);
 
-        this.physics.add.collider(this.player, this.platforms, () => {
-            if (player.body.onFloor()) {
-                player.isGrounded = true;
-            }
-
-
-        });
 
 
         //game.block = this.physics.add.sprite(40, 100, 'block');
@@ -370,120 +341,19 @@ class Level extends Phaser.Scene {
     }
 
     update() {
-        const delta = game.loop.delta / 16;
+        const deltaOne = game.loop.delta / 16;
+        const timeDelta = game.loop.delta / 1000;
 
-        this.player.canWallJump = false;
-        if (this.player.body.blocked.left) {
-            this.player.canWallJump = true;
+        let data = {
+            game: this,
+            timeDeta: timeDelta,
+            deltaOne: deltaOne,
         }
-        if (this.player.body.blocked.right) {
-            this.player.canWallJump = true;
-        }
-
-        if (this.player.canWallJump) {
-            if (this.player.gravity) {
-                this.player.setVelocityY(0);
-                this.player.body.setAllowGravity(false);
-                this.player.gravity = false;
-            }
-        }
-        else {
-            if (!this.player.gravity) {
-                this.player.body.setAllowGravity(true);
-                this.player.gravity = true;
-            }
-        }
-
-        let input = new Phaser.Math.Vector2();
-        let verticalMovement, horizontalMovement = false;
-        if (this.cursors.right.isDown) {
-            input.x += 1;
-            horizontalMovement = true;
-            this.player.setFlipX(false)
-        }
-        if (this.cursors.left.isDown) {
-            input.x -= 1;
-            horizontalMovement = horizontalMovement ? false : true; // Cancel out horizontal movement
-            this.player.setFlipX(true)
-        }
-        if (this.cursors.up.isDown) {
-            input.y -= 1;
-            verticalMovement = true;
-        }
-        if (this.cursors.down.isDown) {
-            //input.y += 1;
-            //verticalMovement = true;
-        }
-
-        // Horizontal Movement
-        if (horizontalMovement) {
-            let xVel = this.player.body.velocity.x + input.x * this.player.xAcceleration * delta;
-            let isMaxSpeed = false;
-            if (xVel > this.player.maxXSpeed) {
-                xVel = this.player.maxXSpeed;
-                isMaxSpeed = true;
-            }
-            else if (xVel < -this.player.maxXSpeed) {
-                xVel = -this.player.maxXSpeed;
-                isMaxSpeed = true;
-            }
-            this.player.setVelocityX(xVel);
-            this.player.anims.play('run', true);
-            this.player.anim = 'run';
-        }
-        else {
-            let xVel = this.player.body.velocity.x;
-            let isStopped = false;
-            if (xVel > 0) {
-                xVel -= this.player.xDeceleration * delta;
-                if (xVel < 0) {
-                    xVel = 0;
-                }
-            }
-            else if (xVel < 0) {
-                xVel += this.player.xDeceleration * delta;
-                if (xVel > 0) {
-                    xVel = 0;
-                }
-            }
-            else {
-                isStopped = true;
-            }
-            this.player.setVelocityX(xVel);
-            if (isStopped) {
-                if (this.player.anim != 'idle_sit') {
-                    this.player.anims.play('idle', true);
-                    this.player.anim = 'idle';
-                }
-            }
-            else{
-                this.player.anims.play('run', true);
-                this.player.anim = 'run';
-            }
-        }
-
-        // Vertical Movement
-        if (this.player.isGrounded) {
-            if (verticalMovement) {
-                let jumpVel = input.y * this.player.jumpVelocity;
-                this.player.setVelocityY(jumpVel);
-            }
-            this.player.isGrounded = false;
-        }
-        else if (this.player.canWallJump) {
-            if (verticalMovement) {
-                let jumpVel = input.y * this.player.wallJumpVelocity;
-                this.player.setVelocityY(jumpVel);
-            }
-        }
-        if (this.player.body.velocity.y > this.player.maxFallSpeed) {
-            this.player.setVelocityY(this.player.maxFallSpeed);
-        }
-
+        this.player.update(data);
 
         this.debugText.x = this.player.x - 45;
         this.debugText.y = this.player.y + 70;
-        
+
         //     if (gameState.player.y > gameState.bg3.height) {
 
         //         // Camera Shake Effect
