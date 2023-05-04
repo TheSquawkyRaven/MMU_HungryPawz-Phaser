@@ -9,8 +9,14 @@ class Level extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 })
-        this.load.spritesheet('oak_woods_tileset', 'images/oak_woods_v1.0/oak_woods_tileset.png', { frameWidth: 24, frameHeight: 24 })
+        this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('oak_woods_tileset', 'images/oak_woods_v1.0/oak_woods_tileset.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('city_buildings', 'images/Sidescroller Shooter - Central City/Assets/Buildings.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('city_props', 'images/Sidescroller Shooter - Central City/Assets/Props-01.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('city_tileset', 'images/Sidescroller Shooter - Central City/Assets/Tiles.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('city2_tileset', 'images/Action Pack - CITY/Assets/Assets_City.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('future_tiles', 'images/TILESET_FUTURISTIC_CITY_BY_CUBIC TREE - GRAPHICS/TILESET_FUTURISTIC_CITY.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet('neon_tiles', 'images/NeonCityFree/Free/FreeAsset.png', { frameWidth: 24, frameHeight: 24 });
         this.load.tilemapTiledJSON('map', 'Tiled/map.json');
         this.load.image('nothing', 'images/nothing.png');
 
@@ -38,7 +44,7 @@ class Level extends Phaser.Scene {
         //     star.setScrollFactor(Math.random() * .1);
         //     gameState.stars.push(star)
         // }
-    } // createStars
+    }
 
     createParallaxBackgrounds() {
         this.bgColor = this.add.rectangle(0, 0, config.width, config.height, 0x00ffbb).setOrigin(0, 0);
@@ -216,37 +222,6 @@ class Level extends Phaser.Scene {
 
     setWeather(weather) {
 
-        // const weathers = {
-
-        //     'morning': {
-        //         'color': 0xecdccc,
-        //         'bgColor': 0xF8c3aC,
-        //         'snow': 1,
-        //         'wind': 20,
-        //     },
-
-        //     'afternoon': {
-        //         'color': 0xffffff,
-        //         'bgColor': 0x0571FF,
-        //         'snow': 1,
-        //         'wind': 80,
-        //     },
-
-        //     'twilight': {
-        //         'color': 0xccaacc,
-        //         'bgColor': 0x18235C,
-        //         'snow': 10,
-        //         'wind': 200,
-        //     },
-
-        //     'night': {
-        //         'color': 0x555555,
-        //         'bgColor': 0x000000,
-        //         'snow': 0,
-        //         'wind': 0,
-        //     },
-        // }
-
         // let { color, bgColor, snow, wind } = weathers[weather];
 
         // gameState.bg1.setTint(color);
@@ -303,6 +278,35 @@ class Level extends Phaser.Scene {
 
         console.log(game);
 
+
+
+
+        const map = this.make.tilemap({ key: 'map' });
+        const oak_woods_tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
+        const city_buildings = map.addTilesetImage('city_buildings', 'city_buildings');
+        const city_props = map.addTilesetImage('city_props', 'city_props');
+        const city_tileset = map.addTilesetImage('city_tileset', 'city_tileset');
+        const city2_tileset = map.addTilesetImage('city2_tileset', 'city2_tileset');
+        const future_tiles = map.addTilesetImage('future_tiles', 'future_tiles');
+        const neon_tiles = map.addTilesetImage('neon_tiles', 'neon_tiles');
+
+        const tintedBackground = map.createStaticLayer('Tinted Background', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
+        const background = map.createStaticLayer('Background', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
+        const base = this.platforms = map.createStaticLayer('Base', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
+        const decoBackground = map.createStaticLayer('DecoBackground', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
+        const deco = map.createStaticLayer('Deco', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
+        
+        tintedBackground.setScale(g.pixelScale);
+        background.setScale(g.pixelScale);
+        base.setScale(g.pixelScale)
+        decoBackground.setScale(g.pixelScale);
+        deco.setScale(g.pixelScale);
+
+        base.setCollisionByExclusion(-1, true);
+
+
+
+
         const player = this.player = this.physics.add.sprite(128, 128, 'cat')
         player.setScale(g.pixelScale);
         player.on('animationcomplete', this.onPlayerAnimationComplete, this);
@@ -313,17 +317,12 @@ class Level extends Phaser.Scene {
         player.jumpVelocity = 600;
         player.wallJumpVelocity = 600;
         player.maxXSpeed = 400;
+        player.maxFallSpeed = 750;
         player.body.setSize(16, 16);
         player.body.setOffset(8, 16);
         player.gravity = true;
 
         player.isGrounded = false;
-
-        const map = this.make.tilemap({ key: 'map' });
-        const tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
-        const platforms = this.platforms = map.createStaticLayer('Base', tileset, 0, 200);
-        platforms.setCollisionByExclusion(-1, true);
-        platforms.setScale(g.pixelScale)
 
         this.debugText = this.add.text(0, 0, 'Player', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
         console.log(this.debugText)
@@ -368,14 +367,6 @@ class Level extends Phaser.Scene {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
         });
-    } // create()
-
-    createPlatform(xIndex, yIndex) {
-        // Creates a platform evenly spaced along the two indices.
-        // If either is not a number it won't make a platform
-        // if (typeof yIndex === 'number' && typeof xIndex === 'number') {
-        //     gameState.platforms.create((220 * xIndex), yIndex * 70, 'platform').setOrigin(0, 0.5).refreshBody();
-        // }
     }
 
     update() {
@@ -420,8 +411,8 @@ class Level extends Phaser.Scene {
             verticalMovement = true;
         }
         if (this.cursors.down.isDown) {
-            input.y += 1;
-            verticalMovement = true;
+            //input.y += 1;
+            //verticalMovement = true;
         }
 
         // Horizontal Movement
@@ -484,6 +475,9 @@ class Level extends Phaser.Scene {
                 let jumpVel = input.y * this.player.wallJumpVelocity;
                 this.player.setVelocityY(jumpVel);
             }
+        }
+        if (this.player.body.velocity.y > this.player.maxFallSpeed) {
+            this.player.setVelocityY(this.player.maxFallSpeed);
         }
 
 

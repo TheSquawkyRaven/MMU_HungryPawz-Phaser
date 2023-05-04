@@ -8,20 +8,66 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "city2_tileset.tsx": {
+            "scaleInDock": 1.5
+        },
+        "city_buildings.tsx": {
+            "scaleInDock": 1.5
+        },
+        "city_props.tsx": {
+            "scaleInDock": 1.5
+        },
+        "city_tileset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "future_tiles.tsx": {
+            "scaleInDock": 3
+        },
         "map.tmx": {
-            "scale": 1,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 415,
-                "y": 278
+                "x": 2104,
+                "y": 502.66666666666663
             }
         },
-        "map.tmx#oak_woods_tileset": {
+        "map.tmx#city2_tileset": {
             "scaleInDock": 1
+        },
+        "map.tmx#city_buildings": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmx#city_props": {
+            "scaleInDock": 1
+        },
+        "map.tmx#city_tileset": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "map.tmx#future_tiles": {
+            "scaleInDock": 1
+        },
+        "map.tmx#neon_tiles": {
+            "scaleInDock": 1
+        },
+        "map.tmx#oak_woods_tileset": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "neon_tiles.tsx": {
+            "scaleInDock": 1.5
         },
         "oak_woods_tileset.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "village_props.tsx": {
+            "scaleInDock": 1
         }
     },
     "last.exportedFilePath": "D:/MMU/Game Physics/Phaser Assignment/Tiled",
@@ -36,6 +82,7 @@
     "project": "game-physics.tiled-project",
     "recentFiles": [
         "map.tmx",
+        "city_tileset.tsx",
         "oak_woods_tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
