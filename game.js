@@ -330,12 +330,15 @@ class Level extends Phaser.Scene {
 
     update() {
         const deltaOne = game.loop.delta / 16;
-        const timeDelta = game.loop.delta / 1000;
+        const deltaTime = game.loop.delta / 1000;
 
         let data = {
             game: this,
-            timeDeta: timeDelta,
+            deltaTime: deltaTime,
             deltaOne: deltaOne,
+            
+            player: this.player,
+            ui: this.ui,
         }
 
         this.player.update(data);

@@ -34,6 +34,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.maxWallJumps = 2;
         this.maxSkyJumps = 1;
 
+        this.maxStamina = 100;
+        this.staminaDrain = 10; //per second
+        this.staminaRegeneration = 10; // per second
+        this.stamina = this.maxStamina;
+
         this.body.setSize(12, 12);
         this.body.setOffset(10, 20);
 
@@ -52,6 +57,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         const game = data.game;
 
+        this.update_contacts(data);
+        this.update_input(data);
+
+        this.update_hMovement(data);
+        this.update_vMovement(data);
+
+        this.update_stamina(data);
+
+    }
+
+    update_contacts(data) {
         if (this.body.blocked.left) {
             if (!this.canGrabWall) {
                 this.canGrabWall = true;
@@ -76,8 +92,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.wallJumps = this.maxWallJumps;
             this.skyJumps = this.maxSkyJumps;
         }
+    }
 
-        let input = new Phaser.Math.Vector2();
+    update_input(data) {
+
+        const game = data.game;
+
+        let input = { x: 0, y: 0};
         let vMovement, hMovement = false;
         if (game.cursors.right.isDown) {
             input.x += 1;
@@ -135,19 +156,32 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.isGrabbingWall = this.canGrabWall && game.cursors.shift.isDown;
+        this.isSlidingDownWall = this.canGrabWall && !this.isGrabbingWall;
 
         data.input = input;
         data.hMovement = hMovement;
         data.vMovement = vMovement;
-
-
-        this.horizontalMovement(data);
-        this.verticalMovement(data);
-
-
     }
 
-    horizontalMovement(data) {
+    update_stamina(data) {
+        const deltaTime = data.deltaTime;
+        if (this.usingStamina) {
+            this.usingStamina = false;
+        }
+        else if (this.isGrounded) {
+            if (this.stamina < this.maxStamina) {
+                this.stamina += this.staminaRegeneration * deltaTime;
+            }
+        }
+        this.update_staminaUI(data);
+    }
+
+    update_staminaUI(data) {
+        const ui = data.ui;
+        ui.setStamina(this.stamina / this.maxStamina);
+    }
+
+    update_hMovement(data) {
 
         const x = data.input.x;
         const hMovement = data.hMovement;
@@ -200,13 +234,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    verticalMovement(data) {
+    update_vMovement(data) {
         const game = data.game;
 
-        let jumpFirstDown = game.cursors.up.firstDown;
+        const jumpFirstDown = game.cursors.up.firstDown;
+        data.jumpFirstDown = jumpFirstDown;
         
         const y = data.input.y;
         const vMovement = data.vMovement;
+
+        this.stickingOnWall = false;
 
         if (this.isGrounded) {
             // On floor
@@ -218,23 +255,27 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             }
         }
         else if (this.isGrabbingWall) {
-            // On wall
-            if (vMovement && jumpFirstDown && this.canWallJump && this.wallJumps > 0) {
-                let jumpVelX = this.wallJumpVelocityX;
-                let jumpVelY = y * this.wallJumpVelocityY;
+            // Grabbing on wall
+            if (this.tryWallJump(data)) {
 
-                this.jump('wall', jumpVelY, this.wallDirectionIsLeft ? jumpVelX : -jumpVelX);
-
-                this.canWallJump = false;
             }
             else {
-                if (this.body.velocity.y > 0) {
-                    let velY = this.body.velocity.y - this.grabFallDeceleration;
-                    if (velY > this.grabFallMaxSpeed) {
-                        velY = this.grabFallMaxSpeed;
-                    }
-                    this.setVelocityY(velY);
+                // stamina check
+                if (this.grabbing_consumeStamina(data)) {
+                    this.stickOnWall();
                 }
+                else {
+                    this.slideDownWall();
+                }
+            }
+        }
+        else if (this.isSlidingDownWall) {
+            // Not grabbing, but running towards the wall
+            if (this.tryWallJump(data)) {
+
+            }
+            else {
+                this.slideDownWall();
             }
         }
         else {
@@ -245,10 +286,59 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             }
         }
 
+        this.body.setAllowGravity(!this.stickingOnWall);
+
         // Limit max falling speed to prevent player from glitching through Arcade's physics
         if (this.body.velocity.y > this.maxFallSpeed) {
             this.setVelocityY(this.maxFallSpeed);
         }
+
+    }
+
+    grabbing_consumeStamina(data) {
+        const deltaTime = data.deltaTime;
+        
+        if (this.stamina > 0) {
+            this.stamina -= this.staminaDrain * deltaTime;
+            this.usingStamina = true;
+            return true;
+        }
+        return false;
+    }
+
+    stickOnWall() {
+        if (this.body.velocity.y >= 0) {
+            this.setVelocityY(0);
+            this.stickingOnWall = true;
+        }
+    }
+
+    slideDownWall() {
+        if (this.body.velocity.y > 0) {
+            let velY = this.body.velocity.y - this.grabFallDeceleration;
+            if (velY > this.grabFallMaxSpeed) {
+                velY = this.grabFallMaxSpeed;
+            }
+            this.setVelocityY(velY);
+        }
+    }
+
+    tryWallJump(data) {
+
+        const vMovement = data.vMovement;
+        const y = data.input.y;
+        const jumpFirstDown = data.jumpFirstDown;
+
+        if (vMovement && jumpFirstDown && this.canWallJump && this.wallJumps > 0) {
+            let jumpVelX = this.wallJumpVelocityX;
+            let jumpVelY = y * this.wallJumpVelocityY;
+
+            this.jump('wall', jumpVelY, this.wallDirectionIsLeft ? jumpVelX : -jumpVelX);
+
+            this.canWallJump = false;
+            return true;
+        }
+        return false;
     }
 
     jump(type, velY, velX) {
