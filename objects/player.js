@@ -28,16 +28,19 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.wallJumpVelocityX = 600;
         this.maxXSpeed = 400;
         this.maxFallSpeed = 750;
+        this.grabFallDeceleration = 15;
+        this.grabFallMaxSpeed = 200;
 
         this.maxWallJumps = 2;
         this.maxSkyJumps = 1;
 
-        this.body.setSize(16, 16);
-        this.body.setOffset(8, 16);
+        this.body.setSize(12, 12);
+        this.body.setOffset(10, 20);
 
         this.isGrounded = false;
 
 
+        this.setCollideWorldBounds(true)
         game.physics.add.collider(this, game.platforms, () => {
 
         });
@@ -50,21 +53,21 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         const game = data.game;
 
         if (this.body.blocked.left) {
-            if (!this.grabbingWall) {
-                this.grabbingWall = true;
+            if (!this.canGrabWall) {
+                this.canGrabWall = true;
                 this.canWallJump = true;
                 this.wallDirectionIsLeft = true;
             }
         }
         else if (this.body.blocked.right) {
-            if (!this.grabbingWall) {
+            if (!this.canGrabWall) {
                 this.canWallJump = true;
-                this.grabbingWall = true;
+                this.canGrabWall = true;
                 this.wallDirectionIsLeft = false;
             }
         }
         else {
-            this.grabbingWall = false;
+            this.canGrabWall = false;
             this.canWallJump = false;
         }
 
@@ -130,6 +133,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             //input.y += 1;
             //verticalMovement = true;
         }
+
+        this.isGrabbingWall = this.canGrabWall && game.cursors.shift.isDown;
+
         data.input = input;
         data.hMovement = hMovement;
         data.vMovement = vMovement;
@@ -211,7 +217,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 this.isGrounded = false;
             }
         }
-        else if (this.grabbingWall) {
+        else if (this.isGrabbingWall) {
             // On wall
             if (vMovement && jumpFirstDown && this.canWallJump && this.wallJumps > 0) {
                 let jumpVelX = this.wallJumpVelocityX;
@@ -222,7 +228,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 this.canWallJump = false;
             }
             else {
-                this.setVelocityY(0);
+                if (this.body.velocity.y > 0) {
+                    let velY = this.body.velocity.y - this.grabFallDeceleration;
+                    if (velY > this.grabFallMaxSpeed) {
+                        velY = this.grabFallMaxSpeed;
+                    }
+                    this.setVelocityY(velY);
+                }
             }
         }
         else {

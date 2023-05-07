@@ -1,11 +1,11 @@
 const g = {
     pixelScale: 4,
-    gridSize: 24 * 4,
 };
 
 class Level extends Phaser.Scene {
     constructor(config) {
         super(config);
+        this.g = g;
     }
 
     preload() {
@@ -19,6 +19,12 @@ class Level extends Phaser.Scene {
         this.load.spritesheet('neon_tiles', 'images/NeonCityFree/Free/FreeAsset.png', { frameWidth: 24, frameHeight: 24 });
         this.load.tilemapTiledJSON('map', 'Tiled/map.json');
         this.load.image('nothing', 'images/nothing.png');
+        
+        //UI
+        this.load.image('UI_fillbar_blue', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Fillbar_01_Block.png');
+        this.load.image('UI_fillbar_orange', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Fillbar_02_Block.png');
+        this.load.image('UI_filler_green', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Filler_01.png');
+        this.load.image('UI_filler_red', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Filler_02.png');
 
 
         //this.load.image('platform', 'images/platform.png');
@@ -238,14 +244,6 @@ class Level extends Phaser.Scene {
         // return
     } // setWeather(weather)
 
-    levelSetup() {
-        // for (const [xIndex, yIndex] of this.heights.entries()) {
-        //     this.createPlatform(xIndex, yIndex);
-        // }
-
-        // // Create the campfire at the end of the level
-        // gameState.goal = this.physics.add.sprite(gameState.width - 40, 100, 'campfire');
-
         // this.physics.add.overlap(gameState.player, gameState.goal,
         //     function () {
         //         this.cameras.main.fade(800,     // duration in milliseconds
@@ -262,8 +260,6 @@ class Level extends Phaser.Scene {
         //     null, this
         // );
 
-        // this.setWeather(this.weather);
-    } // levelSetup()
 
     create() {
         this.active = true
@@ -271,10 +267,44 @@ class Level extends Phaser.Scene {
 
         console.log(game);
 
+        this.create_tilemap();
+
+        this.player = new Player(this, 128, 128);
+        this.ui = new UI(this);
 
 
 
+        this.debugText = this.add.text(0, 0, 'Player', { fontFamily: 'LameFont' });
+        console.log(this.debugText)
+
+        // const blocks = this.blocks = this.physics.add.staticGroup();
+        // let b = blocks.create(game.gridSize, game.gridSize * 3, 'blocks');
+        // b.setScale(game.pixelScale);
+        // b.refreshBody();
+        // b.setFrame(3);
+
+        console.log(this.cameras.main)
+        //this.physics.add.collider(gameState.player, gameState.platforms);
+
+        this.cursors = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+
+            shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
+        });
+    }
+
+    create_tilemap() {
         const map = this.make.tilemap({ key: 'map' });
+
+        const sizeX = map.widthInPixels * 3;
+        const sizeY = map.heightInPixels * 3;
+
+        this.cameras.main.setBounds(0, 0, sizeX, sizeY);
+        this.physics.world.setBounds(0, 0, sizeX, sizeY);
+
         const oak_woods_tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
         const city_buildings = map.addTilesetImage('city_buildings', 'city_buildings');
         const city_props = map.addTilesetImage('city_props', 'city_props');
@@ -289,55 +319,13 @@ class Level extends Phaser.Scene {
         const decoBackground = map.createStaticLayer('DecoBackground', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const deco = map.createStaticLayer('Deco', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
 
-        tintedBackground.setScale(g.pixelScale);
-        background.setScale(g.pixelScale);
-        base.setScale(g.pixelScale)
-        decoBackground.setScale(g.pixelScale);
-        deco.setScale(g.pixelScale);
+        tintedBackground.setScale(3);
+        background.setScale(3);
+        base.setScale(3)
+        decoBackground.setScale(3);
+        deco.setScale(3);
 
         base.setCollisionByExclusion(-1, true);
-
-
-        const player = this.player = new Player(this, 128, 128);
-
-
-
-        this.debugText = this.add.text(0, 0, 'Player', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
-        console.log(this.debugText)
-
-        // const blocks = this.blocks = this.physics.add.staticGroup();
-        // let b = blocks.create(game.gridSize, game.gridSize * 3, 'blocks');
-        // b.setScale(game.pixelScale);
-        // b.refreshBody();
-        // b.setFrame(3);
-
-
-
-        //game.block = this.physics.add.sprite(40, 100, 'block');
-
-
-        //this.createSnow();
-
-        //this.levelSetup();
-
-        //this.cameras.main.setBounds(0, 0, gameState.bg3.width, gameState.bg3.height);
-        //this.physics.world.setBounds(0, 0, gameState.width, gameState.bg3.height + gameState.player.height);
-
-        this.cameras.main.startFollow(
-            this.player,
-            true,
-            0.15, 0.15
-        )
-
-        //this.physics.add.collider(gameState.player, gameState.platforms);
-        //this.physics.add.collider(gameState.goal, gameState.platforms);
-
-        this.cursors = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D,
-        });
     }
 
     update() {
@@ -349,7 +337,10 @@ class Level extends Phaser.Scene {
             timeDeta: timeDelta,
             deltaOne: deltaOne,
         }
+
         this.player.update(data);
+        this.update_camera();
+        this.ui.update(data);
 
         this.debugText.x = this.player.x - 45;
         this.debugText.y = this.player.y + 70;
@@ -372,7 +363,26 @@ class Level extends Phaser.Scene {
         // }
     }
 
+    update_camera() {
+        const cam = this.cameras.main;
+        let toX = this.player.x - this.cameras.main.width / 2;
+        let toY = this.player.y - this.cameras.main.height / 2;
 
+        // Rounding to prevent pixel tearing
+        let x = Math.round(lerp(cam.scrollX, toX, 0.15));
+        let y = Math.round(lerp(cam.scrollY, toY, 0.15));
+
+        if (x < 0) {
+            x = 0;
+        }
+        this.cameras.main.setScroll(x, y);
+    }
+
+
+}
+
+function lerp(from, to, t) {
+    return from + (to - from) * t
 }
 
 const config = {
@@ -394,3 +404,4 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+game.g = g;
