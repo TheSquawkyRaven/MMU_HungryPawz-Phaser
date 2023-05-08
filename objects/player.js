@@ -1,15 +1,27 @@
 class Player extends Phaser.Physics.Arcade.Sprite {
 
-    constructor(game, x, y) {
+    constructor(game, x, y, color) {
         super(game, x, y, "cat");
         game.add.existing(this);
         game.physics.add.existing(this);
 
+        this.tint = color;
+        this.color = color;
+        
         this.init(game);
+        this.start(game);
+    }
+
+    new_cat(game,x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.tint = color;
+        this.color = color;
+
+        this.start(game);
     }
 
     init(game) {
-        this.setScale(g.pixelScale);
 
         this.on('animationcomplete', (animation, frame, sprite) => {
             if (animation.key == 'idle') {
@@ -17,6 +29,25 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 this.anim = 'idle_sit';
             }
         }, this);
+
+        game.physics.add.collider(this, game.platforms, () => {
+
+        });
+        game.physics.add.overlap(this, game.foodGroup, (_, food) => {
+            if (food.looted) {
+                return;
+            }
+            this.foodInRange = food;
+        })
+        game.physics.add.overlap(this, game.foodStorage, () => {
+            this.transferFood(game);
+        });
+
+    }
+    
+
+    start(game) {
+        this.setScale(g.pixelScale);
         this.anims.play('walk', true);
         this.anim = 'walk';
 
@@ -39,18 +70,33 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.staminaRegeneration = 10; // per second
         this.stamina = this.maxStamina;
 
+        this.lives = 3;
+        this.foodHolding = 0;
+
         this.body.setSize(12, 12);
         this.body.setOffset(10, 20);
 
         this.isGrounded = false;
 
+        this.setCollideWorldBounds(true);
+    }
 
-        this.setCollideWorldBounds(true)
-        game.physics.add.collider(this, game.platforms, () => {
 
-        });
+    increaseFood(data, amount) {
+        const ui = data.ui;
+        this.foodHolding += amount;
+        ui.setFoodHolding(this.foodHolding);
+    }
+    decreaseFood(ui, amount) {
+        this.foodHolding -= amount;
+        ui.setFoodHolding(this.foodHolding);
+    }
 
-        return this;
+    transferFood(game) {
+        if (this.foodHolding > 0) {
+            game.increaseFood(1);
+            this.decreaseFood(game.ui, 1);
+        }
     }
 
     update(data) {
@@ -65,6 +111,29 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.update_stamina(data);
 
+
+        //
+        this.update_interact(data);
+
+    }
+
+    update_interact(data) {
+        const game = data.game;
+        const ui = data.ui;
+        if (this.foodInRange) {
+            ui.setInteract(this.foodInRange);
+
+            if (game.cursors.f.isDown) {
+                this.foodInRange.looted = true;
+                this.increaseFood(data, this.foodInRange.amount);
+                this.foodInRange.particles.destroy();
+                this.foodInRange.destroy();
+            }
+
+            this.foodInRange = undefined;
+            return;
+        }
+        ui.setInteract();
     }
 
     update_contacts(data) {
