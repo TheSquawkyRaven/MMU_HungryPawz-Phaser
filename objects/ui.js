@@ -54,6 +54,11 @@ class UI extends Phaser.GameObjects.Sprite {
         this.foodStoredIconW.setOrigin(0, 0);
         this.foodStoredIconW.setScale(2);
 
+        // lives
+        this.lives = game.add.sprite(8, -28, 'lives');
+        this.lives.setFrame(0);
+        this.lives.setScale(3);
+
     }
 
     add(obj) {
@@ -91,6 +96,9 @@ class UI extends Phaser.GameObjects.Sprite {
 
         this.foodHoldingIcon.x = player.x - 28;
         this.foodHoldingIcon.y = player.y + 64;
+
+        this.lives.x = player.x;
+        this.lives.y = player.y - 8;
     }
 
     setStamina(current) {
@@ -117,5 +125,8 @@ class UI extends Phaser.GameObjects.Sprite {
         this.foodStoredW.setText(`x${amount}`)
     }
 
+    setLives(amount) {
+        this.lives.setFrame(3 - amount);
+    }
 
 }

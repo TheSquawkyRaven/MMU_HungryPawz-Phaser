@@ -4,13 +4,38 @@ let g = {
 };
 
 let foodSpawns = [
-    { x: 64, y: 30, amount: 5, sprite: 'trash' }
+    { x: 64, y: 30, amount: 5, sprite: 'trash' },
+    { x: 49, y: 18, amount: 5, sprite: 'trash' },
+    { x: 24, y: 3, amount: 5, sprite: 'trash' },
+    { x: 95, y: 22, amount: 5, sprite: 'trash' },
+    { x: 42, y: 61, amount: 5, sprite: 'trash' },
+    { x: 19, y: 61, amount: 5, sprite: 'trash' },
+    { x: 5, y: 62, amount: 5, sprite: 'trash' },
+
+    { x: 20, y: 3, amount: 5, sprite: 'trash_big', center: 'no' },
+    { x: 81, y: 36, amount: 5, sprite: 'trash_big', center: 'no' },
+
+    { x: 105, y: 16, amount: 5, sprite: 'trash_bin', center: 'x' },
+
+    { x: 110, y: 29, amount: 5, sprite: 'trash_bigbin', center: 'x' },
+
+    { x: 7, y: 24, amount: 5, sprite: 'berries' },
+    { x: 9, y: 24, amount: 5, sprite: 'berries' },
+    { x: 11, y: 24, amount: 5, sprite: 'berries' },
 ];
 
-let playerSpawns = [
-    { x: 61, y: 36, color: 0xffffff },
-    { x: 57, y: 34, color: 0xffff00 },
-    { x: 55, y: 30, color: 0xff00ff },
+let spikeSpawns = [
+    { x: 65, y: 36, sprite: 'spike' },
+]
+
+let playerSpawn = {
+    x: 61,
+    y: 36
+}
+
+let catSleepSpots = [
+    { x: 56, y: 34 },
+    { x: 55, y: 30 },
 ]
 
 class Level extends Phaser.Scene {
@@ -37,8 +62,18 @@ class Level extends Phaser.Scene {
         this.load.image('UI_filler_green', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Filler_01.png');
         this.load.image('UI_filler_red', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Filler_02.png');
 
+        this.load.spritesheet('lives', 'images/ui_lives.png', { frameWidth: 27, frameHeight: 9 });
+
         this.load.image('food', 'images/food.png');
         this.load.image('shine', 'images/shine.png');
+
+        this.load.image('trash', 'images/trash.png');
+        this.load.image('trash_bin', 'images/trash_bin.png');
+        this.load.image('trash_big', 'images/trash_big.png');
+        this.load.image('trash_bigbin', 'images/trash_bigbin.png');
+        this.load.image('berries', 'images/berries.png');
+
+        this.load.image('spike', 'images/spike.png');
 
     }
 
@@ -181,22 +216,26 @@ class Level extends Phaser.Scene {
 
         this.create_tilemap();
         this.create_food();
+        this.create_spikes();
 
         this.foodStored = 0;
         this.catsLeft = 3;
-        this.usingCat = 1;
+        this.usingCat = 1; //1, 2, 3 - don't use 0
         this.cats = [
             {
                 number: 1,
-                alive: true,
+                color: 0xffffff,
+                lives: 1,
             },
             {
                 number: 2,
-                alive: true,
+                color: 0xffff00,
+                lives: 2,
             },
             {
                 number: 3,
-                alive: true,
+                color: 0xff00ff,
+                lives: 3,
             }
         ]
 
@@ -227,24 +266,32 @@ class Level extends Phaser.Scene {
     }
 
     create_player() {
-        let playerSpawn = playerSpawns[this.usingCat - 1];
-        let playerPos = cellToWorldCenterX(playerSpawn.x, playerSpawn.y);
-        this.player = new Player(this, playerPos.x, playerPos.y, playerSpawn.color);
 
+        this.sleepingCats = this.physics.add.staticGroup();
+        let i = 0;
         this.cats.forEach((cat) => {
-            if (cat.number == this.usingCat) {
-                return;
+            if (cat.number != this.usingCat) {
+                this.spawn_sleepingCat(cat, catSleepSpots[i]);
+                i++;
             }
-            this.spawn_sleepingCat(cat.number);
         });
+
+        let playerPos = cellToWorldCenterX(playerSpawn.x, playerSpawn.y);
+        this.player = new Player(this, playerPos.x, playerPos.y, this.cats[this.usingCat - 1]);
     }
 
-    cat_died(number) {
-        this.cats[number - 1].alive = false;
-    }
 
-    spawn_sleepingCat(cat) {
-        //todo spawn sleeping cat
+    spawn_sleepingCat(cat, sleepSpot) {
+        let pos = cellToWorldCenterX(sleepSpot.x, sleepSpot.y);
+        cat.sleepingCat = this.sleepingCats.create(pos.x, pos.y, "cat");
+        cat.sleepingCat.tint = cat.color;
+        cat.sleepingCat.anims.play('lay_sleeping', true);
+        cat.sleepingCat.setScale(g.pixelScale);
+        cat.sleepingCat.x = cat.sleepingCat.x + 48;
+        cat.sleepingCat.y = cat.sleepingCat.y + 8;
+        cat.sleepingCat.refreshBody();
+
+        cat.sleepingCat.cat = cat;
     }
 
     increaseFood(amount) {
@@ -304,15 +351,15 @@ class Level extends Phaser.Scene {
         this.foodGroup = this.physics.add.staticGroup();
         foodSpawns.forEach((foodSpawn) => {
             let pos = cellToWorldCenter(foodSpawn.x, foodSpawn.y);
-
-            let sprite = 'city_props'
-            let frame = 34;
-            if (foodSpawn.sprite === 'trash') {
-                sprite = 'city_props';
-                frame = 34;
+            if (foodSpawn.center) {
+                if (foodSpawn.center == 'no') {
+                    pos = cellToWorld(foodSpawn.x, foodSpawn.y);
+                }
+                if (foodSpawn.center == 'x') {
+                    pos = cellToWorldCenterX(foodSpawn.x, foodSpawn.y);
+                }
             }
-            let food = this.foodGroup.create(pos.x, pos.y, sprite);
-            food.setFrame(frame);
+            let food = this.foodGroup.create(pos.x, pos.y, foodSpawn.sprite);
 
             food.particles = this.add.particles('shine');
             let sizeX = food.displayWidth * g.tileScale;
@@ -330,11 +377,44 @@ class Level extends Phaser.Scene {
                 blendMode: 'ADD'
             });
 
-            food.amount = foodSpawn.amount;
-
             food.setScale(g.tileScale);
             food.refreshBody();
         });
+    }
+
+    create_spikes() {
+        this.spikesGroup = this.physics.add.staticGroup();
+        spikeSpawns.forEach((spikeSpawn) => {
+            let pos = cellToWorldCenter(spikeSpawn.x, spikeSpawn.y);
+            if (spikeSpawn.center) {
+                if (spikeSpawn.center == 'no') {
+                    pos = cellToWorld(spikeSpawn.x, spikeSpawn.y);
+                }
+                if (spikeSpawn.center == 'x') {
+                    pos = cellToWorldCenterX(spikeSpawn.x, spikeSpawn.y);
+                }
+            }
+            let spike = this.spikesGroup.create(pos.x, pos.y, spikeSpawn.sprite);
+
+            // spike.particles = this.add.particles('shine');
+            // let sizeX = spike.displayWidth * g.tileScale;
+            // let sizeY = spike.displayHeight * g.tileScale;
+            // let extX = sizeX / 2;
+            // let extY = sizeY / 2;
+            // spike.emitter = spike.particles.createEmitter({
+            //     x: { min: spike.x - extX, max: spike.x + extX },
+            //     y: { min: spike.y - extY, max: spike.y + extY },
+            //     lifespan: 2000,
+            //     speedX: { min: -5, max: 5 },
+            //     speedY: { min: -5, max: 5 },
+            //     scale: { start: 0.6, end: 0 },
+            //     frequency: 100,
+            //     blendMode: 'ADD'
+            // });
+
+            spike.setScale(g.tileScale);
+            spike.refreshBody();
+        })
     }
 
     snap_camera(x, y) {

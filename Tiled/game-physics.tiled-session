@@ -28,11 +28,11 @@
             "scaleInDock": 3
         },
         "map.tmx": {
-            "scale": 1,
+            "scale": 2,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 1274,
-                "y": 748
+                "x": 1499.5,
+                "y": 716
             }
         },
         "map.tmx#city2_tileset": {
