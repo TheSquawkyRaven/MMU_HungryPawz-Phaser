@@ -169,6 +169,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     lose_life() {
+        //todo
         this.lives--;
         if (this.lives <= 0) {
             this.cat_died();
