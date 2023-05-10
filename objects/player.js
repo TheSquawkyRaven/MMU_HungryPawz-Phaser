@@ -29,6 +29,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         game.physics.add.collider(this, game.platforms, () => {
 
         });
+        game.physics.add.collider(this, game.spikesGroup, (_, spike) => {
+            this.hitBySpike(game, spike);
+        });
+
+
         game.physics.add.overlap(this, game.foodGroup, (_, food) => {
             if (food.looted) {
                 return;
@@ -38,9 +43,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         game.physics.add.overlap(this, game.foodStorage, () => {
             this.transferFood(game);
         });
-        game.physics.add.overlap(this, game.spikesGroup, () => {
-            this.lose_life();
-        });
         game.physics.add.overlap(this, game.sleepingCats, (_, cat) => {
             this.catInRange = cat;
         })
@@ -49,6 +51,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
 
     start(game, cat) {
+        this.tint = cat.color;
+
         this.setScale(g.pixelScale);
         this.anims.play('walk', true);
         this.anim = 'walk';
@@ -75,10 +79,14 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.staminaRegeneration = 10; // per second
         this.stamina = this.maxStamina;
 
-        this.hitInvulTime = 1; // seconds
+        this.hitInvulTime = 2; // seconds
         this.hitInvulTimeCount = 0;
-        this.hitInvulActive = false;
+        this.hitInvulBlink = 0.2 // 
 
+        this.deadRespawnTime = 4;
+        this.deadRespawnTimeCount = 0;
+
+        this.dead = false;
 
         this.body.setSize(12, 12);
         this.body.setOffset(10, 20);
@@ -88,6 +96,20 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
     }
 
+
+    hitBySpike(game, spike) {
+        if (this.hitInvulTimeCount > 0) {
+            return;
+        }
+        this.hitInvulTimeCount = this.hitInvulTime;
+        
+        let angle = getAngle(this, spike);
+        let value = game.physics.velocityFromAngle(angle, 1000, this.body.velocity);
+        this.setVelocityX(-value.x);
+        this.setVelocityY(-value.y);
+
+        this.lose_life(game);
+    }
 
     increaseFood(data, amount) {
         const ui = data.ui;
@@ -121,13 +143,64 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         //
         this.update_interact(data);
+        this.update_lives(data);
+
+        this.update_dead(data);
 
 
-        data.ui.setLives(this.lives);
 
     }
 
+    update_dead(data) {
+        const game = data.game;
+        if (!this.dead) {
+            return;
+        }
+        const deltaTime = data.deltaTime;
+        this.deadRespawnTimeCount -= deltaTime;
+        if (this.deadRespawnTimeCount < 0) {
+            let nextCat = game.getNextAliveCat();
+            if (nextCat === undefined) {
+                console.log("Lose Game!");
+                return;
+            }
+            this.x = nextCat.sleepingCat.x;
+            this.y = nextCat.sleepingCat.y;
+            this.cat = nextCat;
+            nextCat.sleepingCat.destroy();
+            this.start(game, nextCat)
+        }
+    }
+
+    update_lives(data) {
+        data.ui.setLives(this.lives);
+        if (this.dead) {
+            return;
+        }
+
+        if (this.hitInvulTimeCount > 0) {
+            const deltaTime = data.deltaTime;
+            this.hitInvulTimeCount -= deltaTime;
+
+            let blink = Math.round(this.hitInvulTimeCount / this.hitInvulBlink);
+            let doBlink = blink % 2 == 0;
+            if (doBlink) {
+                this.alpha = 0.2;
+            }
+            else {
+                this.alpha = 1;
+            }
+
+        }
+        else {
+            this.alpha = 1;
+        }
+    }
+
     update_interact(data) {
+        if (this.dead) {
+            return;
+        }
         const game = data.game;
         const ui = data.ui;
         if (this.catInRange) {
@@ -158,6 +231,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     switch_cat(game, x, y, catInRange) {
+        game.switchCat(this.cat, catInRange.cat);
         this.x = x;
         this.y = y;
         this.tint = catInRange.cat.color;
@@ -168,21 +242,40 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.start(game, this.cat);
     }
 
-    lose_life() {
-        //todo
-        this.lives--;
-        if (this.lives <= 0) {
-            this.cat_died();
+    lose_life(game) {
+        if (this.lives == 0) {
+            console.error("Player already ded");
             return;
         }
-        this.hitInvulActive = true;
+        this.lives--;
+        if (this.lives <= 0) {
+            this.cat_died(game);
+            return;
+        }
     }
 
-    cat_died() {
-        // TODO use another cat, update UI, update UI requirement of food
+    cat_died(game) {
+        // TODO update UI, update UI requirement of food
+        this.cat.amount = this.foodHolding;
+
+        game.spawn_deadCat(this.cat, { x: this.x, y: this.y });
+        this.body.setAllowGravity(false);
+        this.body.stop();
+        this.body.setVelocityX(0);
+        this.body.setVelocityY(0);
+
+        this.deadRespawnTimeCount = this.deadRespawnTime;
+
+        this.dead = true;
+        this.cat.dead = true;
+        this.alpha = 0;
     }
 
     update_contacts(data) {
+        if (this.dead) {
+            return;
+        }
+
         if (this.body.blocked.left) {
             if (!this.canGrabWall) {
                 this.canGrabWall = true;
@@ -210,6 +303,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update_input(data) {
+        if (this.dead) {
+            return;
+        }
 
         const game = data.game;
 
@@ -294,6 +390,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update_stamina(data) {
+        if (this.dead) {
+            return;
+        }
+
         const deltaTime = data.deltaTime;
         if (this.usingStamina) {
             this.usingStamina = false;
@@ -312,6 +412,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update_hMovement(data) {
+        if (this.dead) {
+            return;
+        }
 
         const x = data.input.x;
         const hMovement = data.hMovement;
@@ -365,6 +468,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update_vMovement(data) {
+        if (this.dead) {
+            return;
+        }
+
         const game = data.game;
 
         const jumpFirstDown = game.cursors.up.firstDown;

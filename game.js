@@ -204,6 +204,12 @@ class Level extends Phaser.Scene {
             frameRate: 8,
             repeat: -1 //Repeat forever
         })
+        this.anims.create({
+            key: 'ded',
+            frames: this.anims.generateFrameNumbers('cat', { start: 296, end: 303 }),
+            frameRate: 8,
+            repeat: 0 // Once
+        })
 
     }
 
@@ -226,16 +232,19 @@ class Level extends Phaser.Scene {
                 number: 1,
                 color: 0xffffff,
                 lives: 1,
+                dead: false,
             },
             {
                 number: 2,
                 color: 0xffff00,
                 lives: 2,
+                dead: false,
             },
             {
                 number: 3,
                 color: 0xff00ff,
                 lives: 3,
+                dead: false,
             }
         ]
 
@@ -268,11 +277,15 @@ class Level extends Phaser.Scene {
     create_player() {
 
         this.sleepingCats = this.physics.add.staticGroup();
+        this.deadCats = this.physics.add.staticGroup();
         let i = 0;
         this.cats.forEach((cat) => {
             if (cat.number != this.usingCat) {
                 this.spawn_sleepingCat(cat, catSleepSpots[i]);
                 i++;
+            }
+            else {
+                this.spawn_sleepingCat(cat, { x: 10000, y: 10000});
             }
         });
 
@@ -292,6 +305,32 @@ class Level extends Phaser.Scene {
         cat.sleepingCat.refreshBody();
 
         cat.sleepingCat.cat = cat;
+    }
+
+    switchCat(fromCat, toCat) {
+        let fCat = fromCat.sleepingCat;
+        fromCat.sleepingCat = toCat.sleepingCat;
+        toCat.sleepingCat = fCat;
+    }
+
+    spawn_deadCat(cat, pos) {
+        let ded = this.deadCats.create(pos.x, pos.y, "cat");
+        ded.tint = cat.color;
+        ded.anims.play('ded', true);
+        ded.setScale(g.pixelScale);
+    }
+
+    getNextAliveCat() {
+        let aliveCat = 0;
+        this.cats.forEach((cat) => {
+            if (aliveCat == 0 && !cat.dead) {
+                aliveCat = cat;
+                return;
+            }
+        })
+        if (aliveCat != 0) {
+            return aliveCat;
+        }
     }
 
     increaseFood(amount) {
@@ -360,6 +399,7 @@ class Level extends Phaser.Scene {
                 }
             }
             let food = this.foodGroup.create(pos.x, pos.y, foodSpawn.sprite);
+            food.amount = foodSpawn.amount;
 
             food.particles = this.add.particles('shine');
             let sizeX = food.displayWidth * g.tileScale;
@@ -475,6 +515,20 @@ function cellToWorldCenterX(cellX, cellY) {
 }
 function cellToWorldCenter(cellX, cellY) {
     return { x: (cellX * g.tileWidth * g.tileScale) + (g.tileWidth / 2 * g.tileScale), y: (cellY * g.tileWidth * g.tileScale) + (g.tileHeight / 2 * g.tileScale) }
+}
+
+function getAngle(obj1, obj2) {
+    // angle in radians
+    let angleRadians = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+    // angle in degrees
+    let angleDeg = (Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x) * 180 / Math.PI);
+    return angleDeg;
+}
+function getPointInCircleFromAngle(angle) {
+    return {
+        x: Math.sin(angle),
+        y: Math.sin(angle)
+    };
 }
 
 const config = {
