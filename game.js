@@ -150,9 +150,9 @@ let catSleepSpots = [
     { x: 55, y: 30 },
 ]
 
-class EndingScene extends Phaser.Scene {
-    constructor(config) {
-        super(config);
+class StartingScene extends Phaser.Scene {
+    constructor() {
+        super({ key: "StartingScene" });
         this.g = g;
     }
 
@@ -161,7 +161,19 @@ class EndingScene extends Phaser.Scene {
     }
 
     create() {
+        let startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Start game', { fontFamily: 'LameFont', fontSize: 28 });
+        startButton.setOrigin(0.5);
+        startButton.setPadding(10);
+        startButton.setStyle({ backgroundColor: '#111' });
+        startButton.setInteractive({ useHandCursor: true });
+        startButton.on('pointerdown', () => {
+            this.scene.start("GameScene");
+        });
+        startButton.on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }));
+        startButton.on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
+    }
 
+    startGame() {
     }
 
     update() {
@@ -173,9 +185,39 @@ class EndingScene extends Phaser.Scene {
 
 }
 
+class EndingScene extends Phaser.Scene {
+    constructor() {
+        super({ key: "EndingScene" })
+        this.g = g;
+    }
+    preload() {
+
+    }
+
+    create() {
+        let startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Quit', { fontFamily: 'LameFont', fontSize: 28 });
+        startButton.setOrigin(0.5);
+        startButton.setPadding(10);
+        startButton.setStyle({ backgroundColor: '#111' });
+        startButton.setInteractive({ useHandCursor: true });
+        startButton.on('pointerdown', () => {
+            this.scene.start("StartingScene");
+        });
+        startButton.on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }));
+        startButton.on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
+    }
+
+    startGame() {
+    }
+
+    update() {
+
+    }
+}
+
 class GameScene extends Phaser.Scene {
-    constructor(config) {
-        super(config);
+    constructor() {
+        super({ key: "GameScene" });
         this.g = g;
     }
 
@@ -717,8 +759,9 @@ const config = {
     },
     pixelArt: true,
     scene: [
-        new EndingScene(),
+        new StartingScene(),
         new GameScene(),
+        
     ]
 };
 
