@@ -11,6 +11,9 @@
         "": {
             "scaleInDock": 1
         },
+        "berries.tsx": {
+            "scaleInDock": 1
+        },
         "city2_tileset.tsx": {
             "scaleInDock": 1.5
         },
@@ -28,12 +31,15 @@
             "scaleInDock": 3
         },
         "map.tmx": {
-            "scale": 2,
+            "scale": 1.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 327.5,
-                "y": 641
+                "x": 1417.3333333333333,
+                "y": 804.6666666666666
             }
+        },
+        "map.tmx#berries": {
+            "scaleInDock": 1
         },
         "map.tmx#city2_tileset": {
             "scaleInDock": 1
@@ -50,7 +56,7 @@
             "scaleInEditor": 1
         },
         "map.tmx#future_tiles": {
-            "scaleInDock": 1
+            "scaleInDock": 2
         },
         "map.tmx#neon_tiles": {
             "scaleInDock": 1.5
@@ -59,12 +65,18 @@
             "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
+        "map.tmx#spike": {
+            "scaleInDock": 1
+        },
         "neon_tiles.tsx": {
             "scaleInDock": 1.5
         },
         "oak_woods_tileset.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "spike.tsx": {
+            "scaleInDock": 1
         },
         "village_props.tsx": {
             "scaleInDock": 1

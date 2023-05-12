@@ -31,11 +31,12 @@ class UI extends Phaser.GameObjects.Sprite {
         this.setStamina(1);
 
         //
+        // TODO time limit
         this.timeUntilWinter = game.add.text(640, 8, `Time Until Winter: `, { fontFamily: 'LameFont', fontSize: 28 });
         this.timeUntilWinter.setOrigin(0.5, 0);
 
-        this.foodStored = game.add.text(8, 8, `Food Stored: 0`, { fontFamily: 'LameFont', fontSize: 24 });
-        this.foodRequired = game.add.text(8, 48, `Food Required for 3 Cats: 300`, { fontFamily: 'LameFont', fontSize: 24 });
+        this.foodRequired = game.add.text(8, 8, `Food Required for 3 Cats: 600 (200 each)`, { fontFamily: 'LameFont', fontSize: 24 });
+        this.foodStored = game.add.text(8, 48, `Food Stored: 0/600`, { fontFamily: 'LameFont', fontSize: 24 });
         this.foodHoldingIcon = game.add.sprite(8, 8, 'food');
 
         this.add(this.timeUntilWinter);
@@ -59,6 +60,7 @@ class UI extends Phaser.GameObjects.Sprite {
         this.lives.setFrame(0);
         this.lives.setScale(3);
 
+        this.game = game;
     }
 
     add(obj) {
@@ -121,8 +123,9 @@ class UI extends Phaser.GameObjects.Sprite {
     }
 
     setFoodStored(amount) {
-        this.foodStored.setText(`Food Stored: ${amount}`);
+        this.foodStored.setText(`Food Stored: ${amount}/${this.game.catsLeft * 200}`);
         this.foodStoredW.setText(`x${amount}`)
+        this.foodRequired.setText(`Food Required for ${this.game.catsLeft} Cats: ${this.game.catsLeft * 200} (200 each)`)
     }
 
     setLives(amount) {

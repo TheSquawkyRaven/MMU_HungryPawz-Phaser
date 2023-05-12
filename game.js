@@ -4,28 +4,140 @@ let g = {
 };
 
 let foodSpawns = [
-    { x: 64, y: 30, amount: 5, sprite: 'trash' },
-    { x: 49, y: 18, amount: 5, sprite: 'trash' },
-    { x: 24, y: 3, amount: 5, sprite: 'trash' },
-    { x: 95, y: 22, amount: 5, sprite: 'trash' },
-    { x: 42, y: 61, amount: 5, sprite: 'trash' },
-    { x: 19, y: 61, amount: 5, sprite: 'trash' },
-    { x: 5, y: 62, amount: 5, sprite: 'trash' },
+    { x: 24, y: 3, amount: 10, sprite: 'trash' },
+    { x: 49, y: 18, amount: 10, sprite: 'trash' },
+    { x: 30, y: 20, amount: 10, sprite: 'trash' },
+    { x: 15, y: 40, amount: 10, sprite: 'trash' },
+    { x: 28, y: 30, amount: 10, sprite: 'trash' },
+    { x: 29, y: 30, amount: 10, sprite: 'trash' },
+    { x: 64, y: 30, amount: 10, sprite: 'trash' },
+    { x: 95, y: 22, amount: 10, sprite: 'trash' },
+    { x: 42, y: 61, amount: 10, sprite: 'trash' },
+    { x: 19, y: 61, amount: 10, sprite: 'trash' },
+    { x: 5, y: 62, amount: 10, sprite: 'trash' },
+    { x: 77, y: 24, amount: 10, sprite: 'trash' },
+    { x: 65, y: 60, amount: 10, sprite: 'trash' },
+    { x: 79, y: 4, amount: 10, sprite: 'trash' },
+    { x: 65, y: 13, amount: 10, sprite: 'trash' },
+    { x: 59, y: 15, amount: 10, sprite: 'trash' },
+    { x: 67, y: 16, amount: 10, sprite: 'trash' },
 
-    { x: 20, y: 3, amount: 5, sprite: 'trash_big', center: 'no' },
-    { x: 81, y: 36, amount: 5, sprite: 'trash_big', center: 'no' },
+    { x: 20, y: 3, amount: 20, sprite: 'trash_big', center: 'no' },
+    { x: 81, y: 36, amount: 20, sprite: 'trash_big', center: 'no' },
+    { x: 24, y: 52, amount: 20, sprite: 'trash_big', center: 'no' },
+    { x: 69, y: 7, amount: 20, sprite: 'trash_big', center: 'no' },
 
-    { x: 105, y: 16, amount: 5, sprite: 'trash_bin', center: 'x' },
+    { x: 105, y: 16, amount: 15, sprite: 'trash_bin', center: 'x' },
+    { x: 39, y: 42, amount: 15, sprite: 'trash_bin', center: 'x' },
 
-    { x: 110, y: 29, amount: 5, sprite: 'trash_bigbin', center: 'x' },
+    { x: 110, y: 29, amount: 60, sprite: 'trash_bigbin', center: 'x' },
 
-    { x: 7, y: 24, amount: 5, sprite: 'berries' },
-    { x: 9, y: 24, amount: 5, sprite: 'berries' },
-    { x: 11, y: 24, amount: 5, sprite: 'berries' },
+    { x: 41, y: 29, amount: 30, sprite: 'trash_mail', center: 'y', },
+
+    { x: 74, y: 56, amount: 20, sprite: 'trash_bigbox', center: 'no' },
+    { x: 98, y: 61, amount: 20, sprite: 'trash_bigbox', center: 'no' },
+    { x: 97, y: 41, amount: 20, sprite: 'trash_bigbox', center: 'no' },
+
+    { x: 101, y: 47, amount: 10, sprite: 'trash_box' },
+    { x: 102, y: 47, amount: 10, sprite: 'trash_box' },
+    { x: 113, y: 41, amount: 10, sprite: 'trash_box' },
+    { x: 76, y: 56, amount: 10, sprite: 'trash_box' },
+    { x: 45, y: 42, amount: 10, sprite: 'trash_box' },
+
+    { x: 9, y: 14, amount: 15, sprite: 'vending_blue', center: 'x' },
+    { x: 68, y: 2, amount: 15, sprite: 'vending_blue', center: 'x' },
+    { x: 10, y: 14, amount: 15, sprite: 'vending_green', center: 'x' },
+    { x: 85, y: 21, amount: 15, sprite: 'vending_green', center: 'x' },
+    { x: 67, y: 2, amount: 15, sprite: 'vending_red', center: 'x' },
+    { x: 84, y: 13, amount: 15, sprite: 'vending_red', center: 'x' },
+
+    { x: 7, y: 23, amount: 5, sprite: 'berries' },
+    { x: 9, y: 23, amount: 5, sprite: 'berries' },
+    { x: 11, y: 23, amount: 5, sprite: 'berries' },
+    { x: 13, y: 23, amount: 5, sprite: 'berries' },
+    { x: 15, y: 23, amount: 5, sprite: 'berries' },
+    { x: 4, y: 27, amount: 5, sprite: 'berries' },
+    { x: 6, y: 27, amount: 5, sprite: 'berries' },
+    { x: 8, y: 27, amount: 5, sprite: 'berries' },
+    { x: 10, y: 27, amount: 5, sprite: 'berries' },
+    { x: 12, y: 27, amount: 5, sprite: 'berries' },
+    { x: 14, y: 27, amount: 5, sprite: 'berries' },
+    { x: 16, y: 27, amount: 5, sprite: 'berries' },
+    { x: 6, y: 31, amount: 5, sprite: 'berries' },
+    { x: 8, y: 31, amount: 5, sprite: 'berries' },
+    { x: 10, y: 31, amount: 5, sprite: 'berries' },
+    { x: 12, y: 31, amount: 5, sprite: 'berries' },
+    { x: 14, y: 31, amount: 5, sprite: 'berries' },
+    { x: 16, y: 31, amount: 5, sprite: 'berries' },
+    { x: 18, y: 31, amount: 5, sprite: 'berries' },
+    { x: 4, y: 35, amount: 5, sprite: 'berries' },
+    { x: 6, y: 35, amount: 5, sprite: 'berries' },
+    { x: 8, y: 35, amount: 5, sprite: 'berries' },
+    { x: 10, y: 35, amount: 5, sprite: 'berries' },
+    { x: 12, y: 35, amount: 5, sprite: 'berries' },
+    { x: 14, y: 35, amount: 5, sprite: 'berries' },
+    { x: 16, y: 35, amount: 5, sprite: 'berries' },
 ];
 
 let spikeSpawns = [
-    { x: 65, y: 36, sprite: 'spike' },
+    { x: 10, y: 3, sprite: 'spike', r: 0 },
+    { x: 14, y: 3, sprite: 'spike', r: 0 },
+    { x: 15, y: 3, sprite: 'spike', r: 0 },
+    { x: 9, y: 27, sprite: 'spike', r: 0 },
+    { x: 17, y: 29, sprite: 'spike', r: 90 },
+    { x: 19, y: 28, sprite: 'spike', r: 270 },
+    { x: 19, y: 29, sprite: 'spike', r: 270 },
+    { x: 11, y: 31, sprite: 'spike', r: 0 },
+    { x: 5, y: 32, sprite: 'spike', r: 270 },
+    { x: 5, y: 33, sprite: 'spike', r: 270 },
+    { x: 7, y: 35, sprite: 'spike', r: 0 },
+    { x: 13, y: 35, sprite: 'spike', r: 0 },
+    { x: 8, y: 40, sprite: 'spike', r: 0 },
+    { x: 12, y: 40, sprite: 'spike', r: 0 },
+    { x: 10, y: 52, sprite: 'spike', r: 0 },
+    { x: 14, y: 52, sprite: 'spike', r: 0 },
+    { x: 17, y: 51, sprite: 'spike', r: 270 },
+    { x: 19, y: 50, sprite: 'spike', r: 180 },
+    { x: 23, y: 30, sprite: 'spike', r: 0 },
+    { x: 24, y: 30, sprite: 'spike', r: 0 },
+    { x: 39, y: 30, sprite: 'spike', r: 0 },
+    { x: 42, y: 30, sprite: 'spike', r: 0 },
+    { x: 87, y: 28, sprite: 'spike', r: 180 },
+    { x: 88, y: 28, sprite: 'spike', r: 180 },
+    { x: 89, y: 28, sprite: 'spike', r: 180 },
+    { x: 63, y: 54, sprite: 'spike', r: 180 },
+    { x: 65, y: 56, sprite: 'spike', r: 0 },
+    { x: 66, y: 55, sprite: 'spike', r: 0 },
+    { x: 69, y: 54, sprite: 'spike', r: 180 },
+    { x: 33, y: 42, sprite: 'spike', r: 0 },
+    { x: 71, y: 48, sprite: 'spike', r: 0 },
+    { x: 72, y: 48, sprite: 'spike', r: 0 },
+    { x: 73, y: 48, sprite: 'spike', r: 0 },
+    { x: 83, y: 48, sprite: 'spike', r: 0 },
+    { x: 84, y: 48, sprite: 'spike', r: 0 },
+    { x: 57, y: 56, sprite: 'spike', r: 0 },
+    { x: 63, y: 54, sprite: 'spike', r: 180 },
+    { x: 69, y: 54, sprite: 'spike', r: 180 },
+    { x: 62, y: 60, sprite: 'spike', r: 180 },
+    { x: 93, y: 52, sprite: 'spike', r: 0 },
+    { x: 102, y: 41, sprite: 'spike', r: 0 },
+    { x: 104, y: 41, sprite: 'spike', r: 0 },
+    { x: 106, y: 41, sprite: 'spike', r: 0 },
+    { x: 105, y: 47, sprite: 'spike', r: 0 },
+    { x: 111, y: 47, sprite: 'spike', r: 0 },
+    { x: 108, y: 45, sprite: 'spike', r: 180 },
+    { x: 114, y: 53, sprite: 'spike', r: 0 },
+    { x: 114, y: 53, sprite: 'spike', r: 0 },
+    { x: 107, y: 61, sprite: 'spike', r: 0 },
+    { x: 108, y: 61, sprite: 'spike', r: 0 },
+    { x: 111, y: 61, sprite: 'spike', r: 0 },
+    { x: 112, y: 61, sprite: 'spike', r: 0 },
+
+    { x: 71, y: 5, sprite: 'spike', r: 0 },
+    { x: 72, y: 13, sprite: 'spike', r: 0 },
+    { x: 78, y: 13, sprite: 'spike', r: 0 },
+    { x: 77, y: 16, sprite: 'spike', r: 0 },
+    { x: 72, y: 19, sprite: 'spike', r: 0 },
 ]
 
 let playerSpawn = {
@@ -38,7 +150,30 @@ let catSleepSpots = [
     { x: 55, y: 30 },
 ]
 
-class Level extends Phaser.Scene {
+class EndingScene extends Phaser.Scene {
+    constructor(config) {
+        super(config);
+        this.g = g;
+    }
+
+    preload() {
+
+    }
+
+    create() {
+
+    }
+
+    update() {
+
+    }
+
+
+
+
+}
+
+class GameScene extends Phaser.Scene {
     constructor(config) {
         super(config);
         this.g = g;
@@ -72,6 +207,13 @@ class Level extends Phaser.Scene {
         this.load.image('trash_big', 'images/trash_big.png');
         this.load.image('trash_bigbin', 'images/trash_bigbin.png');
         this.load.image('berries', 'images/berries.png');
+        this.load.image('trash_mail', 'images/trash_mail.png');
+        this.load.image('trash_bigbox', 'images/trash_bigbox.png');
+        this.load.image('trash_box', 'images/trash_box.png');
+
+        this.load.image('vending_blue', 'images/vending_blue.png');
+        this.load.image('vending_green', 'images/vending_green.png');
+        this.load.image('vending_red', 'images/vending_red.png');
 
         this.load.image('spike', 'images/spike.png');
 
@@ -318,6 +460,22 @@ class Level extends Phaser.Scene {
         ded.tint = cat.color;
         ded.anims.play('ded', true);
         ded.setScale(g.pixelScale);
+        
+        this.catsLeft--;
+        this.ui.setFoodStored(this.foodStored);
+        this.check_objective();
+    }
+
+    check_objective() {
+        if (this.foodStored >= (this.catsLeft * 200)) {
+            if (this.catsLeft == 0) {
+                console.log(`Lose with ${this.catsLeft} cats left!`);
+            }
+            else {
+                console.log(`Win with ${this.catsLeft} cats left!`);
+            }
+            // TODO WIN
+        }
     }
 
     getNextAliveCat() {
@@ -336,6 +494,7 @@ class Level extends Phaser.Scene {
     increaseFood(amount) {
         this.foodStored += amount;
         this.ui.setFoodStored(this.foodStored);
+        this.check_objective();
     }
 
     create_tilemap() {
@@ -397,6 +556,9 @@ class Level extends Phaser.Scene {
                 if (foodSpawn.center == 'x') {
                     pos = cellToWorldCenterX(foodSpawn.x, foodSpawn.y);
                 }
+                if (foodSpawn.center == 'y') {
+                    pos = cellToWorldCenterY(foodSpawn.x, foodSpawn.y);
+                }
             }
             let food = this.foodGroup.create(pos.x, pos.y, foodSpawn.sprite);
             food.amount = foodSpawn.amount;
@@ -454,6 +616,11 @@ class Level extends Phaser.Scene {
 
             spike.setScale(g.tileScale);
             spike.refreshBody();
+            spike.body.setSize(40, 40);
+            spike.body.setOffset(16, 16);
+            if (spikeSpawn.r) {
+                spike.angle = spikeSpawn.r;
+            }
         })
     }
 
@@ -513,6 +680,9 @@ function cellToWorld(cellX, cellY) {
 function cellToWorldCenterX(cellX, cellY) {
     return { x: (cellX * g.tileWidth * g.tileScale) + (g.tileWidth / 2 * g.tileScale), y: cellY * g.tileWidth * g.tileScale }
 }
+function cellToWorldCenterY(cellX, cellY) {
+    return { x: cellX * g.tileWidth * g.tileScale, y: (cellY * g.tileWidth * g.tileScale) + (g.tileHeight / 2 * g.tileScale) }
+}
 function cellToWorldCenter(cellX, cellY) {
     return { x: (cellX * g.tileWidth * g.tileScale) + (g.tileWidth / 2 * g.tileScale), y: (cellY * g.tileWidth * g.tileScale) + (g.tileHeight / 2 * g.tileScale) }
 }
@@ -546,7 +716,10 @@ const config = {
         }
     },
     pixelArt: true,
-    scene: [Level]
+    scene: [
+        new EndingScene(),
+        new GameScene(),
+    ]
 };
 
 const game = new Phaser.Game(config);

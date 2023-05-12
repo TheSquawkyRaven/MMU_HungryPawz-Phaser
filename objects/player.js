@@ -71,8 +71,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.grabFallDeceleration = 15;
         this.grabFallMaxSpeed = 200;
 
-        this.maxWallJumps = 2;
-        this.maxSkyJumps = 1;
+        this.maxWallJumps = 1000;
+        this.maxSkyJumps = 0;
 
         this.maxStamina = 100;
         this.staminaDrain = 10; //per second
@@ -161,7 +161,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.deadRespawnTimeCount < 0) {
             let nextCat = game.getNextAliveCat();
             if (nextCat === undefined) {
-                console.log("Lose Game!");
                 return;
             }
             this.x = nextCat.sleepingCat.x;
@@ -255,7 +254,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     cat_died(game) {
-        // TODO update UI, update UI requirement of food
         this.cat.amount = this.foodHolding;
 
         game.spawn_deadCat(this.cat, { x: this.x, y: this.y });
