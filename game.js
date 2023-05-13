@@ -150,6 +150,13 @@ let catSleepSpots = [
     { x: 55, y: 30 },
 ]
 
+let winState = {
+    food: 0,
+    cats: 0,
+};
+
+let currentScene;
+
 class StartingScene extends Phaser.Scene {
     constructor() {
         super({ key: "StartingScene" });
@@ -157,10 +164,12 @@ class StartingScene extends Phaser.Scene {
     }
 
     preload() {
-
+        currentScene = this;
     }
 
     create() {
+
+
         let startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Start game', { fontFamily: 'LameFont', fontSize: 28 });
         startButton.setOrigin(0.5);
         startButton.setPadding(10);
@@ -171,9 +180,6 @@ class StartingScene extends Phaser.Scene {
         });
         startButton.on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }));
         startButton.on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
-    }
-
-    startGame() {
     }
 
     update() {
@@ -191,23 +197,86 @@ class EndingScene extends Phaser.Scene {
         this.g = g;
     }
     preload() {
-
+        currentScene = this;
     }
 
     create() {
-        let startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Quit', { fontFamily: 'LameFont', fontSize: 28 });
-        startButton.setOrigin(0.5);
-        startButton.setPadding(10);
-        startButton.setStyle({ backgroundColor: '#111' });
-        startButton.setInteractive({ useHandCursor: true });
-        startButton.on('pointerdown', () => {
+        let quitButton = this.add.text(this.cameras.main.centerX, 550, 'Quit', { fontFamily: 'LameFont', fontSize: 28 });
+        quitButton.setOrigin(0.5);
+        quitButton.setPadding(10);
+        quitButton.setStyle({ backgroundColor: '#111' });
+        quitButton.setInteractive({ useHandCursor: true });
+        quitButton.on('pointerdown', () => {
             this.scene.start("StartingScene");
         });
-        startButton.on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }));
-        startButton.on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
-    }
+        quitButton.on('pointerover', () => quitButton.setStyle({ fill: '#f39c12' }));
+        quitButton.on('pointerout', () => quitButton.setStyle({ fill: '#FFF' }));
 
-    startGame() {
+
+        let foodGained = this.add.text(this.cameras.main.centerX, 50, `Food Obtained In Storage: ${winState.food}`, { fontFamily: 'LameFont', fontSize: 28 });
+        foodGained.setOrigin(0.5, 0);
+
+        let catsLeft = this.add.text(this.cameras.main.centerX, 75, `Cats Left: ${winState.cats}`, { fontFamily: 'LameFont', fontSize: 28 });
+        catsLeft.setOrigin(0.5, 0);
+
+        let afterWinter = this.add.text(this.cameras.main.centerX, 150, `After Winter...`, { fontFamily: 'LameFont', fontSize: 28 });
+        afterWinter.setOrigin(0.5, 0);
+
+        let endingText;
+        let catsSurvived;
+        let foodPercentage = winState.food / (winState.cats * 200);
+        if (winState.cats == 3) {
+            if (foodPercentage >= 1) {
+                endingText = `[Ending 1]\nAll of the cats survived the winter while having a full belly.`;
+                catsSurvived = 3;
+            }
+            else if (foodPercentage >= 0.6666) {
+                endingText = `[Ending 2]\nThere wasn't enough food for all.\nOne of the cats died, but the rest managed to survive through the winter.`;
+                catsSurvived = 2;
+            }
+            else if (foodPercentage >= 0.3333) {
+                endingText = `[Ending 3]\nThere wasn't enough food.\nThe cats fought amongst each other and only one of them survived the winter.`;
+                catsSurvived = 1;
+            }
+            else {
+                endingText = `[Ending 4]\nAll the cats died from the severe lack of food.`;
+                catsSurvived = 0;
+            }
+        }
+        else if (winState.cats == 2) {
+            if (foodPercentage >= 1) {
+                endingText = `[Ending 5]\nThe cat's sacrifice will not be forgotten.\nThe 2 of remaining cats survived through the winter.`;
+                catsSurvived = 2;
+            }
+            else if (foodPercentage >= 0.5) {
+                endingText = `[Ending 6]\nThere wasn't enough food for the both of them.\nThe cats fought amongst each other and the other one survived the winter.`;
+                catsSurvived = 1;
+            }
+            else {
+                endingText = `[Ending 7]\nBoth the cats died from the severe lack of food.`;
+                catsSurvived = 0;
+            }
+        }
+        else if (winState.cats == 1) {
+            if (foodPercentage >= 1) {
+                endingText = `[Ending 8]\nThe cat survived winter, at the cost of its friends.\nA lonely journey awaits, but the cat will be forever grateful.`;
+                catsSurvived = 1;
+            }
+            else {
+                endingText = `[Ending 9]\nThe cat died from the severe lack of food.`;
+                catsSurvived = 0;
+            }
+        }
+        else {
+            endingText = `[Ending 10]\nThe cats fought for their own survival.\nBut the world leaves them no mercy.\nNo one will even know the cats existed.`;
+            catsSurvived = 0;
+        }
+
+        let ending = this.add.text(this.cameras.main.centerX, 300, endingText, { fontFamily: 'LameFont', fontSize: 32 });
+        ending.setOrigin(0.5, 0);
+
+        let catsSurvivedT = this.add.text(this.cameras.main.centerX, 450, `Cats Survived: ${catsSurvived}`, { fontFamily: 'LameFont', fontSize: 28 });
+        catsSurvivedT.setOrigin(0.5, 0);
     }
 
     update() {
@@ -222,6 +291,15 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
+        currentScene = this;
+
+        //Background
+        this.load.image('bg1', 'images/free-scrolling-city-backgrounds-pixel-art/BG1.png');
+        this.load.image('bg2', 'images/free-scrolling-city-backgrounds-pixel-art/BG2.png');
+        this.load.image('bg3', 'images/free-scrolling-city-backgrounds-pixel-art/BG3.png');
+        this.load.image('bg4', 'images/free-scrolling-city-backgrounds-pixel-art/BG4.png');
+
+        //
         this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('oak_woods_tileset', 'images/oak_woods_v1.0/oak_woods_tileset.png', { frameWidth: 24, frameHeight: 24 });
         this.load.spritesheet('city_buildings', 'images/Sidescroller Shooter - Central City/Assets/Buildings.png', { frameWidth: 24, frameHeight: 24 });
@@ -232,6 +310,7 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('neon_tiles', 'images/NeonCityFree/Free/FreeAsset.png', { frameWidth: 24, frameHeight: 24 });
         this.load.tilemapTiledJSON('map', 'Tiled/map.json');
         this.load.image('nothing', 'images/nothing.png');
+        this.load.image('black', 'images/black.png');
 
         //UI
         this.load.image('UI_fillbar_blue', 'images/Complete_GUI_Essential_Pack_Free_Version/01_Basic_Collection/01_Flat_Theme/Sprites/UI_Flat_Fillbar_01_Hollow.png');
@@ -274,7 +353,28 @@ class GameScene extends Phaser.Scene {
     }
 
     createParallaxBackgrounds() {
-        this.bgColor = this.add.rectangle(0, 0, config.width, config.height, 0x00ffbb).setOrigin(0, 0);
+        let bg1 = this.add.image(0, 0, 'bg1');
+        let bg2 = this.add.image(0, this.cameras.main.height, 'bg2');
+        let bg3 = this.add.image(0, this.cameras.main.height, 'bg3');
+        let bg4 = this.add.image(0, this.cameras.main.height, 'bg4');
+
+        bg1.setOrigin(0, 0);
+        bg2.setOrigin(0, 1);
+        bg3.setOrigin(0, 1);
+        bg4.setOrigin(0, 1);
+
+        bg1.setScale(3);
+        bg2.setScale(2);
+        bg3.setScale(2);
+        bg4.setScale(2);
+
+        const game_width = 8640;
+        const window_width = config.width;
+
+        bg1.setScrollFactor(0);
+        bg2.setScrollFactor((bg2.getBounds().width - window_width) / (game_width - window_width), 0);
+        bg3.setScrollFactor((bg3.getBounds().width - window_width) / (game_width - window_width), 0);
+        bg4.setScrollFactor((bg4.getBounds().width - window_width) / (game_width - window_width), 0);
 
 
     }
@@ -416,6 +516,11 @@ class GameScene extends Phaser.Scene {
 
         console.log(game);
 
+        
+        this.createParallaxBackgrounds();
+
+
+
         this.create_tilemap();
         this.create_food();
         this.create_spikes();
@@ -427,13 +532,13 @@ class GameScene extends Phaser.Scene {
             {
                 number: 1,
                 color: 0xffffff,
-                lives: 1,
+                lives: 3,
                 dead: false,
             },
             {
                 number: 2,
                 color: 0xffff00,
-                lives: 2,
+                lives: 3,
                 dead: false,
             },
             {
@@ -442,7 +547,7 @@ class GameScene extends Phaser.Scene {
                 lives: 3,
                 dead: false,
             }
-        ]
+        ];
 
         this.create_player();
         
@@ -538,13 +643,15 @@ class GameScene extends Phaser.Scene {
         if (this.foodStored >= (this.catsLeft * 200)) {
             if (this.catsLeft == 0) {
                 console.log(`Lose with ${this.catsLeft} cats left!`);
-                // TODO put lose state
+                winState.food = this.foodStored;
+                winState.cats = this.catsLeft;
                 this.scene.start("EndingScene");
 
             }
             else {
                 console.log(`Win with ${this.catsLeft} cats left!`);
-                // TODO put win state
+                winState.food = this.foodStored;
+                winState.cats = this.catsLeft;
                 this.scene.start("EndingScene");
 
             }
@@ -552,7 +659,8 @@ class GameScene extends Phaser.Scene {
     }
     outOfTime() {
         console.log(`Out of Time! Lose with ${this.catsLeft} cats left!`);
-        // TODO put lose state
+        winState.food = this.foodStored;
+        winState.cats = this.catsLeft;
         this.scene.start("EndingScene");
     }
 
@@ -588,6 +696,9 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, sizeX, sizeY);
         this.physics.world.setBounds(0, 0, sizeX, sizeY);
 
+        console.log(sizeX);
+
+        const black_tiles = map.addTilesetImage('black', 'black');
         const oak_woods_tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
         const city_buildings = map.addTilesetImage('city_buildings', 'city_buildings');
         const city_props = map.addTilesetImage('city_props', 'city_props');
@@ -596,12 +707,14 @@ class GameScene extends Phaser.Scene {
         const future_tiles = map.addTilesetImage('future_tiles', 'future_tiles');
         const neon_tiles = map.addTilesetImage('neon_tiles', 'neon_tiles');
 
+        const black = map.createStaticLayer('Black Filter', [black_tiles]);
         const tintedBackground = map.createStaticLayer('Tinted Background', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const background = map.createStaticLayer('Background', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const base = this.platforms = map.createStaticLayer('Base', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const decoBackground = map.createStaticLayer('DecoBackground', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
         const deco = map.createStaticLayer('Deco', [oak_woods_tileset, city_buildings, city_props, city_tileset, city2_tileset, future_tiles, neon_tiles], 0, 0);
 
+        black.setScale(g.tileScale);
         tintedBackground.setScale(g.tileScale);
         background.setScale(g.tileScale);
         base.setScale(g.tileScale);
@@ -675,22 +788,6 @@ class GameScene extends Phaser.Scene {
                 }
             }
             let spike = this.spikesGroup.create(pos.x, pos.y, spikeSpawn.sprite);
-
-            // spike.particles = this.add.particles('shine');
-            // let sizeX = spike.displayWidth * g.tileScale;
-            // let sizeY = spike.displayHeight * g.tileScale;
-            // let extX = sizeX / 2;
-            // let extY = sizeY / 2;
-            // spike.emitter = spike.particles.createEmitter({
-            //     x: { min: spike.x - extX, max: spike.x + extX },
-            //     y: { min: spike.y - extY, max: spike.y + extY },
-            //     lifespan: 2000,
-            //     speedX: { min: -5, max: 5 },
-            //     speedY: { min: -5, max: 5 },
-            //     scale: { start: 0.6, end: 0 },
-            //     frequency: 100,
-            //     blendMode: 'ADD'
-            // });
 
             spike.setScale(g.tileScale);
             spike.refreshBody();
@@ -806,3 +903,9 @@ const config = {
 
 const game = new Phaser.Game(config);
 game.g = g;
+
+function EndGame(catsLeft, food) {
+    winState.food = food;
+    winState.cats = catsLeft;
+    currentScene.scene.start("EndingScene");
+}

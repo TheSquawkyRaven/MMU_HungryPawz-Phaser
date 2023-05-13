@@ -1,30 +1,4 @@
 
-
-        //this.load.image('platform', 'images/platform.png');
-        //this.load.spritesheet('campfire', 'images/campfire.png', { frameWidth: 32, frameHeight: 32 });
-        
-
-    //createStars() {
-        // gameState.stars = [];
-
-        // function getStarPoints() {
-        //     const color = 0xffffff;
-        //     return {
-        //         x: Math.floor(Math.random() * 900),
-        //         y: Math.floor(Math.random() * config.height * .5),
-        //         radius: Math.floor(Math.random() * 3),
-        //         color,
-        //     }
-        // }
-
-        // for (let i = 0; i < 200; i++) {
-        //     const { x, y, radius, color } = getStarPoints();
-        //     const star = this.add.circle(x, y, radius, color)
-        //     star.setScrollFactor(Math.random() * .1);
-        //     gameState.stars.push(star)
-        // }
-    //}
-
     
         //gameState.bg1 = this.add.image(0, 0, 'bg1');
         //gameState.bg2 = this.add.image(0, 0, 'bg2');

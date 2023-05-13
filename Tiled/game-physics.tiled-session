@@ -14,6 +14,9 @@
         "berries.tsx": {
             "scaleInDock": 1
         },
+        "black.tsx": {
+            "scaleInDock": 1
+        },
         "city2_tileset.tsx": {
             "scaleInDock": 1.5
         },
@@ -31,18 +34,21 @@
             "scaleInDock": 3
         },
         "map.tmx": {
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 0.33,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1644,
-                "y": 1047
+                "x": 1272.727272727273,
+                "y": 815.1515151515152
             }
         },
         "map.tmx#berries": {
             "scaleInDock": 1
         },
-        "map.tmx#city2_tileset": {
+        "map.tmx#black": {
             "scaleInDock": 1
+        },
+        "map.tmx#city2_tileset": {
+            "scaleInDock": 5.5
         },
         "map.tmx#city_buildings": {
             "scaleInDock": 1.5,
