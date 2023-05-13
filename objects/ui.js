@@ -31,9 +31,10 @@ class UI extends Phaser.GameObjects.Sprite {
         this.setStamina(1);
 
         //
-        // TODO time limit
-        this.timeUntilWinter = game.add.text(640, 8, `Time Until Winter: `, { fontFamily: 'LameFont', fontSize: 28 });
+        this.timeLeft = 900; //15 minutes
+        this.timeUntilWinter = game.add.text(640, 8, `Time Until Winter: ${this.timeLeft}`, { fontFamily: 'LameFont', fontSize: 28 });
         this.timeUntilWinter.setOrigin(0.5, 0);
+        this.setTimeLeft();
 
         this.foodRequired = game.add.text(8, 8, `Food Required for 3 Cats: 600 (200 each)`, { fontFamily: 'LameFont', fontSize: 24 });
         this.foodStored = game.add.text(8, 48, `Food Stored: 0/600`, { fontFamily: 'LameFont', fontSize: 24 });
@@ -101,6 +102,19 @@ class UI extends Phaser.GameObjects.Sprite {
 
         this.lives.x = player.x;
         this.lives.y = player.y - 8;
+
+        this.update_timeLeft(data);
+    }
+
+    update_timeLeft(data) {
+        const game = data.game;
+        const deltaTime = data.deltaTime;
+
+        this.timeLeft -= deltaTime;
+        this.setTimeLeft();
+        if (this.timeLeft < 0) {
+            game.outOfTime();
+        }
     }
 
     setStamina(current) {
@@ -130,6 +144,32 @@ class UI extends Phaser.GameObjects.Sprite {
 
     setLives(amount) {
         this.lives.setFrame(3 - amount);
+    }
+
+    setTimeLeft() {
+        let seconds = 0;
+        let minutes = 0;
+        if (this.timeLeft > 0) {
+            seconds = Math.ceil(this.timeLeft);
+            minutes = Math.floor(seconds / 60);
+            seconds = seconds % 60;
+        }
+        let secondsText = seconds;
+        if (seconds < 10) {
+            secondsText = `0${seconds}`;
+        }
+        let minutesText = minutes;
+        if (minutes < 10) {
+            minutesText = `0${minutes}`;
+        }
+        this.timeUntilWinter.setText(`Time Until Winter: ${minutesText}:${secondsText}`);
+        if (this.timeLeft <= 300) {
+            this.timeUntilWinter.tint = 0xffff00;
+        }
+        else if (this.timeLeft <= 60) {
+            this.timeUntilWinter.tint = 0xff0000;
+        }
+
     }
 
 }

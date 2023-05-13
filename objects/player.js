@@ -125,6 +125,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.foodHolding > 0) {
             game.increaseFood(1);
             this.decreaseFood(game.ui, 1);
+            game.deposit.play();
         }
     }
 
@@ -167,7 +168,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             this.y = nextCat.sleepingCat.y;
             this.cat = nextCat;
             nextCat.sleepingCat.destroy();
-            this.start(game, nextCat)
+            this.start(game, nextCat);
+            game.cat_start.play();
         }
     }
 
@@ -221,6 +223,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                 this.increaseFood(data, this.foodInRange.amount);
                 this.foodInRange.particles.destroy();
                 this.foodInRange.destroy();
+                game.gain.play();
             }
 
             this.foodInRange = undefined;
@@ -239,6 +242,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         catInRange.cat = cat;
 
         this.start(game, this.cat);
+        game.cat_start.play();
     }
 
     lose_life(game) {
@@ -249,7 +253,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.lives--;
         if (this.lives <= 0) {
             this.cat_died(game);
+            game.cat_die.play();
             return;
+        }
+        else {
+            game.cat_hurt.play();
         }
     }
 
@@ -485,6 +493,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             if (vMovement && jumpFirstDown) {
                 let jumpVel = y * this.jumpVelocity;
                 this.jump('ground', jumpVel);
+                game.cat_jump.play();
 
                 this.isGrounded = false;
             }
@@ -492,7 +501,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         else if (this.isGrabbingWall) {
             // Grabbing on wall
             if (this.tryWallJump(data)) {
-
+                game.cat_wallJump.play();
             }
             else {
                 // stamina check
@@ -507,7 +516,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         else if (this.isSlidingDownWall) {
             // Not grabbing, but running towards the wall
             if (this.tryWallJump(data)) {
-
+                game.cat_wallJump.play();
             }
             else {
                 this.slideDownWall();

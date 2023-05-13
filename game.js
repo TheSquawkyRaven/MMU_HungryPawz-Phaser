@@ -259,6 +259,18 @@ class GameScene extends Phaser.Scene {
 
         this.load.image('spike', 'images/spike.png');
 
+
+        this.load.audio('music', 'audio/Johnny Tal - Cool strolling Cat.mp3');
+        this.load.audio('cat_hurt', 'audio/meowing_cat.mp3');
+        this.load.audio('cat_start', 'audio/Meow.ogg');
+        this.load.audio('cat_die', 'audio/kitten_mew-1.wav');
+        this.load.audio('cat_jump', 'audio/SFX_Jump_22.wav');
+        this.load.audio('cat_wallJump', 'audio/SFX_Jump_11.wav');
+        this.load.audio('gain', 'audio/SFX_Jump_17.wav');
+        this.load.audio('deposit', 'audio/Ejimas1.mp3');
+        
+
+
     }
 
     createParallaxBackgrounds() {
@@ -436,15 +448,29 @@ class GameScene extends Phaser.Scene {
         
         this.ui = new UI(this);
 
+        this.cat_start = this.sound.add('cat_start');
+        this.cat_start.play();
+        
+        this.cat_hurt = this.sound.add('cat_hurt');
+        
+        this.cat_die = this.sound.add('cat_die');
+        
+        this.cat_jump = this.sound.add('cat_jump');
+        this.cat_jump.volume = 0.5;
+        this.cat_wallJump = this.sound.add('cat_wallJump');
+        this.cat_wallJump.volume = 0.5;
+
+        this.gain = this.sound.add('gain');
+        this.gain.volume = 0.5;
+        this.deposit = this.sound.add('deposit');
+
+        this.music = this.sound.add('music');
+        this.music.volume = 0.5;
+        this.music.loop = true;
+        this.music.play();
+
 
         this.snap_camera(this.player.x, this.player.y);
-
-        // const blocks = this.blocks = this.physics.add.staticGroup();
-        // let b = blocks.create(game.gridSize, game.gridSize * 3, 'blocks');
-        // b.setScale(game.pixelScale);
-        // b.refreshBody();
-        // b.setFrame(3);
-        //this.physics.add.collider(gameState.player, gameState.platforms);
 
         this.cursors = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -512,12 +538,22 @@ class GameScene extends Phaser.Scene {
         if (this.foodStored >= (this.catsLeft * 200)) {
             if (this.catsLeft == 0) {
                 console.log(`Lose with ${this.catsLeft} cats left!`);
+                // TODO put lose state
+                this.scene.start("EndingScene");
+
             }
             else {
                 console.log(`Win with ${this.catsLeft} cats left!`);
+                // TODO put win state
+                this.scene.start("EndingScene");
+
             }
-            // TODO WIN
         }
+    }
+    outOfTime() {
+        console.log(`Out of Time! Lose with ${this.catsLeft} cats left!`);
+        // TODO put lose state
+        this.scene.start("EndingScene");
     }
 
     getNextAliveCat() {
@@ -757,11 +793,14 @@ const config = {
             enableBody: true,
         }
     },
+    audio: {
+        disableWebAudio: true
+    },
     pixelArt: true,
     scene: [
         new StartingScene(),
         new GameScene(),
-        
+        new EndingScene(),
     ]
 };
 
