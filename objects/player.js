@@ -1,3 +1,10 @@
+/********************************************
+Course : TGD2251 Game Physics
+Session: Trimester 2, 2022/23
+ID and Name #1 : 1191101213 RavenLimZheXuan
+Contacts #1 : 011-55873318 1191101213@student.mmu.edu.my
+********************************************/
+
 class Player extends Phaser.Physics.Arcade.Sprite {
 
     constructor(game, x, y, cat) {
@@ -72,13 +79,14 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.grabFallMaxSpeed = 200;
 
         this.maxWallJumps = 1000;
-        this.maxSkyJumps = 0;
+        this.maxSkyJumps = 0; //double jumps
 
         this.maxStamina = 100;
         this.staminaDrain = 10; //per second
         this.staminaRegeneration = 10; // per second
         this.stamina = this.maxStamina;
 
+        //invulnerability
         this.hitInvulTime = 2; // seconds
         this.hitInvulTimeCount = 0;
         this.hitInvulBlink = 0.2 // 
@@ -102,7 +110,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
             return;
         }
         this.hitInvulTimeCount = this.hitInvulTime;
-        
+
         let angle = getAngle(this, spike);
         let value = game.physics.velocityFromAngle(angle, 1000, this.body.velocity);
         this.setVelocityX(-value.x);

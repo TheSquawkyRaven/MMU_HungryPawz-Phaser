@@ -1,3 +1,10 @@
+/********************************************
+Course : TGD2251 Game Physics
+Session: Trimester 2, 2022/23
+ID and Name #1 : 1191101213 RavenLimZheXuan
+Contacts #1 : 011-55873318 1191101213@student.mmu.edu.my
+********************************************/
+
 let g = {
     tileScale: 3,
     pixelScale: 4,
@@ -118,7 +125,7 @@ let spikeSpawns = [
     { x: 57, y: 56, sprite: 'spike', r: 0 },
     { x: 63, y: 54, sprite: 'spike', r: 180 },
     { x: 69, y: 54, sprite: 'spike', r: 180 },
-    { x: 62, y: 60, sprite: 'spike', r: 180 },
+    { x: 62, y: 60, sprite: 'spike', r: 0 },
     { x: 93, y: 52, sprite: 'spike', r: 0 },
     { x: 102, y: 41, sprite: 'spike', r: 0 },
     { x: 104, y: 41, sprite: 'spike', r: 0 },
@@ -169,8 +176,11 @@ class StartingScene extends Phaser.Scene {
 
     create() {
 
+        let title = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Food for Winter', { fontFamily: 'LameFont', fontSize: 64 });
+        title.setOrigin(0.5);
 
-        let startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Start game', { fontFamily: 'LameFont', fontSize: 28 });
+
+        let startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 50, 'Start game', { fontFamily: 'LameFont', fontSize: 28 });
         startButton.setOrigin(0.5);
         startButton.setPadding(10);
         startButton.setStyle({ backgroundColor: '#111' });
@@ -222,6 +232,7 @@ class EndingScene extends Phaser.Scene {
         let afterWinter = this.add.text(this.cameras.main.centerX, 150, `After Winter...`, { fontFamily: 'LameFont', fontSize: 28 });
         afterWinter.setOrigin(0.5, 0);
 
+        // Ending text
         let endingText;
         let catsSurvived;
         let foodPercentage = winState.food / (winState.cats * 200);
@@ -339,6 +350,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('spike', 'images/spike.png');
 
 
+        //Audio
         this.load.audio('music', 'audio/Johnny Tal - Cool strolling Cat.mp3');
         this.load.audio('cat_hurt', 'audio/meowing_cat.mp3');
         this.load.audio('cat_start', 'audio/Meow.ogg');
@@ -347,7 +359,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('cat_wallJump', 'audio/SFX_Jump_11.wav');
         this.load.audio('gain', 'audio/SFX_Jump_17.wav');
         this.load.audio('deposit', 'audio/Ejimas1.mp3');
-        
+
 
 
     }
@@ -516,7 +528,7 @@ class GameScene extends Phaser.Scene {
 
         console.log(game);
 
-        
+
         this.createParallaxBackgrounds();
 
 
@@ -550,16 +562,16 @@ class GameScene extends Phaser.Scene {
         ];
 
         this.create_player();
-        
+
         this.ui = new UI(this);
 
         this.cat_start = this.sound.add('cat_start');
         this.cat_start.play();
-        
+
         this.cat_hurt = this.sound.add('cat_hurt');
-        
+
         this.cat_die = this.sound.add('cat_die');
-        
+
         this.cat_jump = this.sound.add('cat_jump');
         this.cat_jump.volume = 0.5;
         this.cat_wallJump = this.sound.add('cat_wallJump');
@@ -600,7 +612,7 @@ class GameScene extends Phaser.Scene {
                 i++;
             }
             else {
-                this.spawn_sleepingCat(cat, { x: 10000, y: 10000});
+                this.spawn_sleepingCat(cat, { x: 10000, y: 10000 });
             }
         });
 
@@ -633,7 +645,7 @@ class GameScene extends Phaser.Scene {
         ded.tint = cat.color;
         ded.anims.play('ded', true);
         ded.setScale(g.pixelScale);
-        
+
         this.catsLeft--;
         this.ui.setFoodStored(this.foodStored);
         this.check_objective();
@@ -845,6 +857,7 @@ class GameScene extends Phaser.Scene {
 
 }
 
+// linear interpolation
 function lerp(from, to, t) {
     return from + (to - from) * t
 }
@@ -862,9 +875,8 @@ function cellToWorldCenter(cellX, cellY) {
     return { x: (cellX * g.tileWidth * g.tileScale) + (g.tileWidth / 2 * g.tileScale), y: (cellY * g.tileWidth * g.tileScale) + (g.tileHeight / 2 * g.tileScale) }
 }
 
+// angle between 2 objects
 function getAngle(obj1, obj2) {
-    // angle in radians
-    let angleRadians = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
     // angle in degrees
     let angleDeg = (Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x) * 180 / Math.PI);
     return angleDeg;
@@ -885,7 +897,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
             gravity: { y: 1000 },
             enableBody: true,
         }
@@ -904,6 +916,7 @@ const config = {
 const game = new Phaser.Game(config);
 game.g = g;
 
+// Cheating purposes
 function EndGame(catsLeft, food) {
     winState.food = food;
     winState.cats = catsLeft;

@@ -1,3 +1,10 @@
+/********************************************
+Course : TGD2251 Game Physics
+Session: Trimester 2, 2022/23
+ID and Name #1 : 1191101213 RavenLimZheXuan
+Contacts #1 : 011-55873318 1191101213@student.mmu.edu.my
+********************************************/
+
 class UI extends Phaser.GameObjects.Sprite {
 
     constructor(game) {
@@ -24,8 +31,8 @@ class UI extends Phaser.GameObjects.Sprite {
 
         this.staminaFillbar.angle = this.staminaFiller.angle = -90;
 
-        this.addSprite(this.staminaFiller);
-        this.addSprite(this.staminaFillbar);
+        this.add(this.staminaFiller);
+        this.add(this.staminaFillbar);
         this.add(this.staminaText);
 
         this.setStamina(1);
@@ -67,10 +74,6 @@ class UI extends Phaser.GameObjects.Sprite {
     add(obj) {
         this.children.push(obj);
         obj.initialOffset = { x: obj.x, y: obj.y };
-    }
-
-    addSprite(obj) {
-        this.add(obj);
     }
 
     update(data) {
@@ -164,9 +167,11 @@ class UI extends Phaser.GameObjects.Sprite {
         }
         this.timeUntilWinter.setText(`Time Until Winter: ${minutesText}:${secondsText}`);
         if (this.timeLeft <= 300) {
+            // Yellow warning at 5 minutes mark
             this.timeUntilWinter.tint = 0xffff00;
         }
         else if (this.timeLeft <= 60) {
+            // Red warning at the last minute
             this.timeUntilWinter.tint = 0xff0000;
         }
 
