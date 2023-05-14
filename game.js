@@ -228,7 +228,7 @@ class StartingScene extends Phaser.Scene {
         this.createPlatform();
         this.createCat();
 
-        let title = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Food for Winter', { fontFamily: 'LameFont', fontSize: 64 });
+        let title = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Hungry Pawz', { fontFamily: 'LameFont', fontSize: 64 });
         title.setOrigin(0.5);
 
 
@@ -735,14 +735,12 @@ class GameScene extends Phaser.Scene {
     check_objective() {
         if (this.foodStored >= (this.catsLeft * 200)) {
             if (this.catsLeft == 0) {
-                console.log(`Lose with ${this.catsLeft} cats left!`);
                 winState.food = this.foodStored;
                 winState.cats = this.catsLeft;
                 this.scene.start("EndingScene");
 
             }
             else {
-                console.log(`Win with ${this.catsLeft} cats left!`);
                 winState.food = this.foodStored;
                 winState.cats = this.catsLeft;
                 this.scene.start("EndingScene");
@@ -751,7 +749,6 @@ class GameScene extends Phaser.Scene {
         }
     }
     outOfTime() {
-        console.log(`Out of Time! Lose with ${this.catsLeft} cats left!`);
         winState.food = this.foodStored;
         winState.cats = this.catsLeft;
         this.scene.start("EndingScene");
@@ -788,8 +785,6 @@ class GameScene extends Phaser.Scene {
 
         this.cameras.main.setBounds(0, 0, sizeX, sizeY);
         this.physics.world.setBounds(0, 0, sizeX, sizeY);
-
-        console.log(sizeX);
 
         const black_tiles = map.addTilesetImage('black', 'black');
         const oak_woods_tileset = map.addTilesetImage('oak_woods_tileset', 'oak_woods_tileset');
