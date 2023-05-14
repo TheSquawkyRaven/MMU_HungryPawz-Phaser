@@ -172,9 +172,61 @@ class StartingScene extends Phaser.Scene {
 
     preload() {
         currentScene = this;
+        
+        //Background
+        this.load.image('bg1', 'images/free-scrolling-city-backgrounds-pixel-art/BG1.png');
+        this.load.image('bg2', 'images/free-scrolling-city-backgrounds-pixel-art/BG2.png');
+        this.load.image('bg3', 'images/free-scrolling-city-backgrounds-pixel-art/BG3.png');
+        this.load.image('bg4', 'images/free-scrolling-city-backgrounds-pixel-art/BG4.png');
+
+        this.load.image('pole', 'images/pole.png');
+        this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 });
+    }
+
+    createBackgrounds() {
+        let bg1 = this.add.image(0, 0, 'bg1');
+        let bg2 = this.add.image(0, this.cameras.main.height, 'bg2');
+        let bg3 = this.add.image(0, this.cameras.main.height, 'bg3');
+        let bg4 = this.add.image(0, this.cameras.main.height, 'bg4');
+
+        bg1.setOrigin(0, 0);
+        bg2.setOrigin(0, 1);
+        bg3.setOrigin(0, 1);
+        bg4.setOrigin(0, 1);
+
+        bg1.setScale(3);
+        bg2.setScale(2);
+        bg3.setScale(2);
+        bg4.setScale(2);
+    }
+
+    createPlatform() {
+        let pole = this.add.image(0, this.cameras.main.height, 'pole');
+        pole.setOrigin(0, 1);
+        pole.setScale(g.tileScale);
+    }
+
+    createCat() {
+        let catsGroup = this.physics.add.staticGroup();
+        let cat = catsGroup.create(175, this.cameras.main.height - (120 * g.tileScale), 'cat');
+        cat.anims.play('lay_sleeping', true);
+        cat.setScale(g.pixelScale);
+        cat.setOrigin(0, 1);
     }
 
     create() {
+
+        
+        this.anims.create({
+            key: 'lay_sleeping',
+            frames: this.anims.generateFrameNumbers('cat', { start: 88, end: 95 }),
+            frameRate: 8,
+            repeat: -1 //Repeat forever
+        });
+
+        this.createBackgrounds();
+        this.createPlatform();
+        this.createCat();
 
         let title = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Food for Winter', { fontFamily: 'LameFont', fontSize: 64 });
         title.setOrigin(0.5);
@@ -208,9 +260,37 @@ class EndingScene extends Phaser.Scene {
     }
     preload() {
         currentScene = this;
+
+        this.load.image('bg5', 'images/free-scrolling-city-backgrounds-pixel-art/BG5.png');
+        this.load.image('bg6', 'images/free-scrolling-city-backgrounds-pixel-art/BG6.png');
+        this.load.image('bg7', 'images/free-scrolling-city-backgrounds-pixel-art/BG7.png');
+        this.load.image('bg8', 'images/free-scrolling-city-backgrounds-pixel-art/BG8.png');
+
+        this.load.image('pole', 'images/pole.png');
+        this.load.spritesheet('cat', 'images/Cat-Sheet.png', { frameWidth: 32, frameHeight: 32 });
     }
 
+    createBackgrounds() {
+        let bg1 = this.add.image(0, 0, 'bg5');
+        let bg2 = this.add.image(0, this.cameras.main.height, 'bg6');
+        let bg3 = this.add.image(0, this.cameras.main.height, 'bg7');
+        let bg4 = this.add.image(0, this.cameras.main.height, 'bg8');
+
+        bg1.setOrigin(0, 0);
+        bg2.setOrigin(0, 1);
+        bg3.setOrigin(0, 1);
+        bg4.setOrigin(0, 1);
+
+        bg1.setScale(3);
+        bg2.setScale(2);
+        bg3.setScale(2);
+        bg4.setScale(2);
+    }
+    
     create() {
+
+        this.createBackgrounds();
+
         let quitButton = this.add.text(this.cameras.main.centerX, 550, 'Quit', { fontFamily: 'LameFont', fontSize: 28 });
         quitButton.setOrigin(0.5);
         quitButton.setPadding(10);
@@ -225,12 +305,15 @@ class EndingScene extends Phaser.Scene {
 
         let foodGained = this.add.text(this.cameras.main.centerX, 50, `Food Obtained In Storage: ${winState.food}`, { fontFamily: 'LameFont', fontSize: 28 });
         foodGained.setOrigin(0.5, 0);
+        foodGained.tint = 0x000000;
 
         let catsLeft = this.add.text(this.cameras.main.centerX, 75, `Cats Left: ${winState.cats}`, { fontFamily: 'LameFont', fontSize: 28 });
         catsLeft.setOrigin(0.5, 0);
+        catsLeft.tint = 0x000000;
 
         let afterWinter = this.add.text(this.cameras.main.centerX, 150, `After Winter...`, { fontFamily: 'LameFont', fontSize: 28 });
         afterWinter.setOrigin(0.5, 0);
+        afterWinter.tint = 0x000000;
 
         // Ending text
         let endingText;
@@ -285,9 +368,11 @@ class EndingScene extends Phaser.Scene {
 
         let ending = this.add.text(this.cameras.main.centerX, 300, endingText, { fontFamily: 'LameFont', fontSize: 32 });
         ending.setOrigin(0.5, 0);
+        ending.tint = 0x000000;
 
         let catsSurvivedT = this.add.text(this.cameras.main.centerX, 450, `Cats Survived: ${catsSurvived}`, { fontFamily: 'LameFont', fontSize: 28 });
         catsSurvivedT.setOrigin(0.5, 0);
+        catsSurvivedT.tint = 0x000000;
     }
 
     update() {
@@ -387,7 +472,6 @@ class GameScene extends Phaser.Scene {
         bg2.setScrollFactor((bg2.getBounds().width - window_width) / (game_width - window_width), 0);
         bg3.setScrollFactor((bg3.getBounds().width - window_width) / (game_width - window_width), 0);
         bg4.setScrollFactor((bg4.getBounds().width - window_width) / (game_width - window_width), 0);
-
 
     }
 
@@ -526,9 +610,6 @@ class GameScene extends Phaser.Scene {
         this.active = true
         this.initAnimations();
 
-        console.log(game);
-
-
         this.createParallaxBackgrounds();
 
 
@@ -549,13 +630,13 @@ class GameScene extends Phaser.Scene {
             },
             {
                 number: 2,
-                color: 0xffff00,
+                color: 0xff6c9c,
                 lives: 3,
                 dead: false,
             },
             {
                 number: 3,
-                color: 0xff00ff,
+                color: 0x70ff9e,
                 lives: 3,
                 dead: false,
             }

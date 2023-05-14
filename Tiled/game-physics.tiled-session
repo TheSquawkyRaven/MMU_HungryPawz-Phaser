@@ -34,11 +34,11 @@
             "scaleInDock": 3
         },
         "map.tmx": {
-            "scale": 0.33,
-            "selectedLayer": 0,
+            "scale": 0.5,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 1272.727272727273,
-                "y": 815.1515151515152
+                "x": 1398,
+                "y": 808
             }
         },
         "map.tmx#berries": {
