@@ -107,7 +107,8 @@ Finally, I’d also like to thank myself, Raven, for seeing through to the end o
 # References
 
 ### Gameplay Reference
-(played this game years ago, but some of the mechanics are inspired from this) - Celeste https://www.celestegame.com Maddy Makes Games, Extremely OK Games, Ltd
+Celeste https://www.celestegame.com Maddy Makes Games, Extremely OK Games, Ltd 
+(I played this game years ago, but some of the mechanics are inspired from this game)
 
 ### Asset References
 
