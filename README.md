@@ -17,6 +17,7 @@ Created By:
 |Email Address|1191101213@student.mmu.edu.my|
 |Phone No.|01155873318|
 
+Github Link in case this md file is not rendering properly: https://github.com/TheSorrowRaven/game-physics-phaser-assignment/blob/main/README.md
 
 # Introduction
 Hungry Pawz is a survival game with multiple endings. The game follows the journey of a group of 3 cats. Winter is coming, and there is no food in their storage. The player takes the role of one of the cats, and explores the surroundings to obtain food and store it back in the storage safely. However, there are many dangers around, and getting hurt too much makes them lose their lives. And time is unforgiving, if winter approaches, some of the cats may starve to death.
@@ -107,7 +108,8 @@ Finally, I’d also like to thank myself, Raven, for seeing through to the end o
 # References
 
 ### Gameplay Reference
-Celeste https://www.celestegame.com Maddy Makes Games, Extremely OK Games, Ltd 
+Celeste https://www.celestegame.com Maddy Makes Games, Extremely OK Games, Ltd
+
 (I played this game years ago, but some of the mechanics are inspired from this game)
 
 ### Asset References
